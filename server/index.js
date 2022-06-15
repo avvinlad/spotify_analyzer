@@ -141,39 +141,18 @@ function getTracks(accessToken, playlistID, offset) {
 app.get('/getTrackFeatures', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const accessToken = req.query.accessToken;
     const tracksID = req.query.tracksID;
-    let tracks = tracksID.split(",");
-    let offsets = Math.floor(tracks.length / 100) + 1;
-    let promises = [];
-    let curTracksID = '';
-    for (let i = 0; i < offsets; i++) {
-        curTracksID = tracks.slice(i * 100, (i + 1) * 100).join(",");
-        promises.push(getTrackFeatures(accessToken, curTracksID));
-    }
-    Promise.all(promises)
+    let url = `https://api.spotify.com/v1/audio-features?ids=${tracksID}`;
+    let config = {
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        }
+    };
+    Axios.get(url, config)
         .then((response) => {
-        let audioFeatures = [];
-        response.forEach(audioFeature => {
-            audioFeatures = audioFeatures.concat(audioFeature.audio_features);
-        });
-        res.send(audioFeatures);
+        res.send(response.data.audio_features);
     });
 }));
-function getTrackFeatures(accessToken, tracksID) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let url = `https://api.spotify.com/v1/audio-features?ids=${tracksID}`;
-        let config = {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-            }
-        };
-        let res = yield Axios.get(url, config);
-        if (res.status !== 200) {
-            return null;
-        }
-        return res.data;
-    });
-}
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log("Server is running...");

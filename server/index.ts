@@ -148,27 +148,6 @@ app.get('/getTrackFeatures', async (req: any, res: any) => {
   const accessToken = req.query.accessToken;
   const tracksID = req.query.tracksID; 
   
-  let tracks = tracksID.split(",");
-  let offsets = Math.floor(tracks.length / 100) + 1;
-  let promises = [];
-  let curTracksID = '';
-  for (let i = 0; i < offsets; i++){ 
-    curTracksID = tracks.slice(i * 100, (i + 1) * 100).join(",");
-    promises.push(getTrackFeatures(accessToken, curTracksID));
-  }
-
-  Promise.all(promises)
-  .then((response) => {
-    let audioFeatures: any = [];
-    response.forEach(audioFeature => {
-      audioFeatures = audioFeatures.concat(audioFeature.audio_features);
-    })
-    res.send(audioFeatures)
-  })
-});
-
-
-async function getTrackFeatures(accessToken: string, tracksID: string) {
   let url: any = `https://api.spotify.com/v1/audio-features?ids=${tracksID}`;
   let config = {
     headers: { 
@@ -176,10 +155,12 @@ async function getTrackFeatures(accessToken: string, tracksID: string) {
       'Authorization': `Bearer ${accessToken}`,
     }
   }
-  let res = await Axios.get(url, config);
-  if (res.status !== 200) { return null; }
-  return res.data;
-}
+
+  Axios.get(url, config)
+  .then((response: any) => {
+    res.send(response.data.audio_features);
+  })
+});
 
 
 const PORT = 3001;

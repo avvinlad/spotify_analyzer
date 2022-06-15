@@ -66,15 +66,19 @@ const Playlist: FC = () => {
     }
   });
 
-
   function formatTracks(resTracks: any) {
     let shapedTracks: Track[] = [];
-    shapedTracks = resTracks.map((track: any) => ( {
+    shapedTracks = resTracks.map((track: any) => ({
       id: track.track.id,
       name: track.track.name,
-      artists: _formatArtists(track.track.artists)
+      artists: _formatArtists(track.track.artists),
+      tempo: 0,
+      acousticness: 0,
+      valence: 0,
+      energy: 0
     }));
-    setTracks(shapedTracks);
+    // setTracks(shapedTracks);
+    audioFeatures(shapedTracks);
   }
 
   function _formatArtists(artists: any) {
@@ -85,31 +89,53 @@ const Playlist: FC = () => {
     )
   }
 
-  function retrieveAudioFeatures() {
+
+  async function audioFeatures(rawTracks: Track[]) {
     if (playlist) {
-      let tracksID = tracks.map((track: any) => (track.id)).join(","); 
-      console.log(tracks);
-      Axios.get("http://localhost:3001/getTrackFeatures", { params: { accessToken, tracksID } })
-      .then((res: any) => {
-        addAudioFeatures(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        // window.location.href = "/";
+      let tracks = rawTracks.map(track => track.id)
+      let offsets = Math.floor(tracks.length / 100) + 1;
+      let promises = [];
+      let curTracks: string = '';
+      for (let chunk = 0; chunk < offsets; chunk++) {
+        curTracks = tracks.slice(chunk * 100, (chunk + 1) * 100).join(",");
+        promises.push(getAudioFeatures(curTracks));
+      }
+
+      Promise.all(promises)
+      .then((response) => {
+        let audioFeatures: any = [];
+        response.forEach(audioFeature => {
+          audioFeatures = audioFeatures.concat(audioFeature);
+        })
+        let result = addAudioFeatures(rawTracks, audioFeatures);
+        console.log(result);
       });
     }
   }
 
-  function addAudioFeatures(audioFeatures: any) {
-    let updatedTracks: Track[] = tracks;
-    audioFeatures.forEach((audioFeature: any) => {
-      updatedTracks.find((track: Track)=> track.id === audioFeature.id)!.tempo = audioFeature.tempo;
-      updatedTracks.find((track: Track)=> track.id === audioFeature.id)!.acousticness = audioFeature.acousticness;
-      updatedTracks.find((track: Track)=> track.id === audioFeature.id)!.valence = audioFeature.valence;
-      updatedTracks.find((track: Track)=> track.id === audioFeature.id)!.energy = audioFeature.energy;
-    });
+  async function getAudioFeatures(tracksID: string) {
+    let res = await Axios.get("http://localhost:3001/getTrackFeatures", { params: { accessToken, tracksID } })
+    if (res.status !== 200) { return null; }
+    return res.data;
+  }
+
+
+  function addAudioFeatures(shapedTracks: Track[], audioFeatures: any) {
+    let updatedTracks: Track[] = shapedTracks;
+    if (!tracks && !audioFeatures) { return null; }
+    // console.log(`${updatedTracks.length} === ${audioFeatures.length}`);
+    if (updatedTracks.length !== audioFeatures.length) { return null; }
+    updatedTracks.forEach(track => {
+      audioFeatures.forEach((feature: any) => {
+        if (track.id === feature.id) {
+          track.tempo = feature.tempo;
+          track.acousticness = feature.acousticness;
+          track.energy = feature.energy;
+          track.valence = feature.valence;
+        }
+      })
+    })
     setTracks(updatedTracks);
-    console.log(tracks);
   }
 
   // DISPLAY TRACKS
@@ -121,6 +147,8 @@ const Playlist: FC = () => {
         <td style={{ padding: "10px" }}>{track.name}</td>
         <td style={{ padding: "10px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
         <td style={{ padding: "10px" }}>{track.tempo}</td>
+        <td style={{ padding: "10px" }}>{track.valence}</td>
+        <td style={{ padding: "10px" }}>{track.energy}</td>
       </tr>
     ));
     return trackComp;
@@ -134,11 +162,13 @@ const Playlist: FC = () => {
       </div>
       <div className="d-flex justify-content-center">
         <table className="table table-bordered table-hover" style={{ border: "#1DB954" }}>
-          <thead>
+          <thead className="-center">
             <tr>
               <th>Song Name</th>
               <th>Artists</th>
               <th>Beats Per Minute (BPM)</th>
+              <th>Valence</th>
+              <th>Energy</th>
             </tr>
           </thead>
           <tbody className="" style={{ margin: "10px" }}>
