@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/App.css";
 import { useParams } from "react-router-dom";
 import Axios from "axios";
 
@@ -106,9 +107,8 @@ const Playlist: FC = () => {
         let audioFeatures: any = [];
         response.forEach(audioFeature => {
           audioFeatures = audioFeatures.concat(audioFeature);
-        })
-        let result = addAudioFeatures(rawTracks, audioFeatures);
-        console.log(result);
+        });
+        addAudioFeatures(rawTracks, audioFeatures);
       });
     }
   }
@@ -156,12 +156,12 @@ const Playlist: FC = () => {
 
   return (  
     <Container>
-      <div className="text-center">
+      <div className="text-center text-info">
         <h2>{playlist ? playlist.name : "No Playlist"}</h2>
         <p>Total Tracks: {tracks ? tracks.length : "0"}</p>
       </div>
       <div className="d-flex justify-content-center">
-        <table className="table table-bordered table-hover" style={{ border: "#1DB954" }}>
+        <table className="table text-light">
           <thead className="-center">
             <tr>
               <th>Song Name</th>
@@ -171,7 +171,7 @@ const Playlist: FC = () => {
               <th>Energy</th>
             </tr>
           </thead>
-          <tbody className="" style={{ margin: "10px" }}>
+          <tbody className="">
             { tracks ? displayTracks() : '' }
           </tbody>
           </table>
