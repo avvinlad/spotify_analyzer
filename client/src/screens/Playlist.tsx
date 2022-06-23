@@ -21,6 +21,9 @@ interface Track {
   acousticness: number;
   valence: number;
   energy: number;
+  danceability: number;
+  mode: number;
+  key: number;
 };
 
 interface Artist {
@@ -76,7 +79,10 @@ const Playlist: FC = () => {
       tempo: 0,
       acousticness: 0,
       valence: 0,
-      energy: 0
+      energy: 0,
+      danceability: 0,
+      mode: 0,
+      key: 0
     }));
     // setTracks(shapedTracks);
     audioFeatures(shapedTracks);
@@ -132,6 +138,9 @@ const Playlist: FC = () => {
           track.acousticness = feature.acousticness;
           track.energy = feature.energy;
           track.valence = feature.valence;
+          track.danceability = feature.danceability;
+          track.mode = feature.mode;
+          track.key = feature.key;
         }
       })
     })
@@ -144,11 +153,14 @@ const Playlist: FC = () => {
     let trackComp: any = [];
     trackComp = tracks.map((track: any) => (
       <tr key={track.id} style={ {padding: "10px"} }>
-        <td style={{ padding: "10px" }}>{track.name}</td>
+        <td style={{ padding: "10px", minWidth: "30px" }}>{track.name}</td>
         <td style={{ padding: "10px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
         <td style={{ padding: "10px" }}>{track.tempo}</td>
         <td style={{ padding: "10px" }}>{track.valence}</td>
         <td style={{ padding: "10px" }}>{track.energy}</td>
+        <td style={{ padding: "10px" }}>{track.danceability}</td>
+        <td style={{ padding: "10px" }}>{track.mode}</td>
+        <td style={{ padding: "10px" }}>{track.key}</td>
       </tr>
     ));
     return trackComp;
@@ -164,11 +176,14 @@ const Playlist: FC = () => {
         <table className="table text-light">
           <thead className="-center">
             <tr>
-              <th>Song Name</th>
+              <th style={{ minWidth: "20px"}}>Song Name</th>
               <th>Artists</th>
-              <th>Beats Per Minute (BPM)</th>
+              <th>Tempo</th>
               <th>Valence</th>
               <th>Energy</th>
+              <th>Danceability</th>
+              <th>Mode</th>
+              <th>Key</th>
             </tr>
           </thead>
           <tbody className="">
