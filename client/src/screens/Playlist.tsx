@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/App.css";
 import { useParams } from "react-router-dom";
@@ -17,6 +17,7 @@ interface Track {
   id: string;
   name: string;
   artists: string;
+  dateAdded: string;
   tempo: number;
   acousticness: number;
   valence: number;
@@ -76,18 +77,19 @@ const Playlist: FC = () => {
       id: track.track.id,
       name: track.track.name,
       artists: _formatArtists(track.track.artists),
+      dateAdded: track.added_at,
       tempo: 0,
       acousticness: 0,
       valence: 0,
       energy: 0,
       danceability: 0,
       mode: 0,
-      key: 0
+      key: 0.
     }));
-    // setTracks(shapedTracks);
     audioFeatures(shapedTracks);
   }
 
+  // shape artsits 
   function _formatArtists(artists: any) {
     return (artists.map((artist: any) : Artist => ({
         id: artist.id,
@@ -97,6 +99,7 @@ const Playlist: FC = () => {
   }
 
 
+  // async processes to retrieve all audio features
   async function audioFeatures(rawTracks: Track[]) {
     if (playlist) {
       let tracks = rawTracks.map(track => track.id)
@@ -105,7 +108,7 @@ const Playlist: FC = () => {
       let curTracks: string = '';
       for (let chunk = 0; chunk < offsets; chunk++) {
         curTracks = tracks.slice(chunk * 100, (chunk + 1) * 100).join(",");
-        promises.push(getAudioFeatures(curTracks));
+        promises.push(_getAudioFeatures(curTracks));
       }
 
       Promise.all(promises)
@@ -119,17 +122,17 @@ const Playlist: FC = () => {
     }
   }
 
-  async function getAudioFeatures(tracksID: string) {
+  // get request for audio features
+  async function _getAudioFeatures(tracksID: string) {
     let res = await Axios.get("http://localhost:3001/getTrackFeatures", { params: { accessToken, tracksID } })
     if (res.status !== 200) { return null; }
     return res.data;
   }
 
-
+  // add audio features to state
   function addAudioFeatures(shapedTracks: Track[], audioFeatures: any) {
     let updatedTracks: Track[] = shapedTracks;
     if (!tracks && !audioFeatures) { return null; }
-    // console.log(`${updatedTracks.length} === ${audioFeatures.length}`);
     if (updatedTracks.length !== audioFeatures.length) { return null; }
     updatedTracks.forEach(track => {
       audioFeatures.forEach((feature: any) => {
@@ -147,6 +150,10 @@ const Playlist: FC = () => {
     setTracks(updatedTracks);
   }
 
+  function sortTracks(filter: string) {
+    console.log(filter);
+  }
+
   // DISPLAY TRACKS
   function displayTracks() {
     if (!tracks) return '';
@@ -161,6 +168,7 @@ const Playlist: FC = () => {
         <td style={{ padding: "10px" }}>{track.danceability}</td>
         <td style={{ padding: "10px" }}>{track.mode}</td>
         <td style={{ padding: "10px" }}>{track.key}</td>
+        <td style={{ padding: "10px" }}>{track.dateAdded.split('T')[0]}</td>
       </tr>
     ));
     return trackComp;
@@ -168,22 +176,23 @@ const Playlist: FC = () => {
 
   return (  
     <Container>
-      <div className="text-center text-info">
+      <div className="text-center text-success">
         <h2>{playlist ? playlist.name : "No Playlist"}</h2>
         <p>Total Tracks: {tracks ? tracks.length : "0"}</p>
       </div>
       <div className="d-flex justify-content-center">
         <table className="table text-light">
-          <thead className="-center">
+          <thead className="center tableHeader">
             <tr>
-              <th style={{ minWidth: "20px"}}>Song Name</th>
-              <th>Artists</th>
-              <th>Tempo</th>
-              <th>Valence</th>
-              <th>Energy</th>
-              <th>Danceability</th>
-              <th>Mode</th>
-              <th>Key</th>
+              <th><button className="headerButton" onClick={() => sortTracks('name')}>Song Name</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('artists[0]')}>Artists</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('tempo')}>Tempo</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('valence')}>Valence</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('energy')}>Energy</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('danceability')}>Danceability</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('mode')}>Mode</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('key')}>Key</button></th>
+              <th><button className="headerButton" onClick={() => sortTracks('dateAdded')}>Date Added</button></th>
             </tr>
           </thead>
           <tbody className="">

@@ -34,7 +34,7 @@ const Dashboard: FC<Code> = ({ code }) => {
   if (playlists.length > 0) {
     playlists.forEach((playlist: any) => {
       plNames.push(
-        <div className='d-inline-flex flex-column' style={{ padding: "10px" }}>
+        <div key={playlist.id} className='d-inline-flex flex-column' style={{ padding: "10px" }}>
           <a className='' key={playlist.id} id={playlist.id} href={`/playlist/${playlist.id}`} style={{ margin: "10px" }}>
             <img key={playlist.id} id={playlist.id} src={playlist.images[0].url} alt="album artwork" style={{ maxHeight: "175px", maxWidth: "175px" }}/>
           </a>
@@ -49,7 +49,7 @@ const Dashboard: FC<Code> = ({ code }) => {
   return (
     <Container>
       <div className='text-center'>
-        <h1 className='text-info'>Playlist Dashboard</h1>
+        <h1 className='text-success'>Playlist Dashboard</h1>
       </div>
       <div className='d-flex'>
         <div className='col'>
