@@ -91,6 +91,8 @@ const Playlist: FC = () => {
     audioFeatures(shapedTracks);
   }
 
+
+
   // shape artsits 
   function _formatArtists(artists: any) {
     return (artists.map((artist: any) : Artist => ({
@@ -154,13 +156,8 @@ const Playlist: FC = () => {
 
   function sortTracks(filter: string) {
     let sortedTracks: Track[];
-    if (filter === 'artists') {
-      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compareArtists(filter)) : tracks.sort(compareArtists(filter)).reverse();
-    } else if (filter === 'name') {
-      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compare(filter)) : tracks.sort(compare(filter)).reverse();
-    } else {
-      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compare(filter)) : tracks.sort(compare(filter)).reverse();
-    }
+    sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compare(filter)) : tracks.sort(compare(filter)).reverse();
+
     setTracks(sortedTracks);
     setSortTracksOrder((sortTracksOrder === 0 || sortTracksOrder === -1) ? 1 : -1);
   }
@@ -171,7 +168,13 @@ const Playlist: FC = () => {
         if (a[filter].toUpperCase() < b[filter].toUpperCase()) { return -1; }
         else if (a[filter].toUpperCase() > b[filter].toUpperCase()) { return 1; }
         return 0;
-      } else {
+      } 
+      else if (filter === 'artists') {
+        if (a[filter][0].name.toUpperCase() < b[filter][0].name.toUpperCase()) { return -1; }
+        else if (a[filter][0].name.toUpperCase() > b[filter][0].name.toUpperCase()) { return 1; }
+        return 0;
+      } 
+      else {
         if (a[filter] < b[filter]) { return -1; }
         else if (a[filter] > b[filter]) { return 1; }
         return 0;
@@ -179,12 +182,16 @@ const Playlist: FC = () => {
     }
   }
 
-  function compareArtists(filter: string) {
-    return function (a: any, b: any) {
-      if (a[filter][0].name.toUpperCase() < b[filter][0].name.toUpperCase()) { return -1; }
-      else if (a[filter][0].name.toUpperCase() > b[filter][0].name.toUpperCase()) { return 1; }
-      return 0;
-    }
+  function formatDate(date: string) {
+    // 2021-10-14T05:26:10Z
+    // const options: any = {
+    //   year: 'numeric',
+    //   month: 'short',
+    //   day: 'numeric',
+    // };
+    let datetime: Date = new Date(date);
+
+    return datetime.toLocaleDateString();
   }
 
   // DISPLAY TRACKS
@@ -193,6 +200,7 @@ const Playlist: FC = () => {
     let trackComp: any = [];
     trackComp = tracks.map((track: any) => (
       <tr key={track.id} style={ {padding: "10px"} }>
+        <td><input type="checkbox"/></td>
         <td style={{ padding: "10px", minWidth: "30px" }}>{track.name}</td>
         <td style={{ padding: "10px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
         <td style={{ padding: "10px" }}>{track.tempo}</td>
@@ -201,7 +209,7 @@ const Playlist: FC = () => {
         <td style={{ padding: "10px" }}>{track.danceability}</td>
         <td style={{ padding: "10px" }}>{track.mode}</td>
         <td style={{ padding: "10px" }}>{track.key}</td>
-        <td style={{ padding: "10px" }}>{track.dateAdded.split('T')[0]}</td>
+        <td style={{ padding: "2px" }}>{formatDate(track.dateAdded)}</td>
       </tr>
     ));
     return trackComp;
@@ -217,12 +225,13 @@ const Playlist: FC = () => {
         <table className="table text-light">
           <thead className="center tableHeader">
             <tr>
+              <th className="headerButton">Select</th>
               <th><button className="headerButton" onClick={() => sortOrder('name')}>Song Name⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('artists')}>Artists⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('tempo')}>Tempo⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('valence')}>Valence⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('energy')}>Energy⇵</button></th>
-              <th><button className="headerButton" onClick={() => sortOrder('danceability')}>Danceability⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('danceability')}>Dance⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('mode')}>Mode⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('key')}>Key⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('dateAdded')}>Date Added⇵</button></th>
