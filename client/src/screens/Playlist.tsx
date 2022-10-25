@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/App.css";
 import { useParams } from "react-router-dom";
@@ -36,6 +36,8 @@ const Playlist: FC = () => {
   let { playlistID } = useParams();
   const [tracks, setTracks] = useState<Track[]>([]);
   const [playlist, setPlaylist] = useState<PlaylistObj>();
+  const [sortTracksOrder, setSortTracksOrder] = useState(0);
+  const sortOrder = (filter: string) => sortTracks(filter);
   const accessToken = sessionStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -151,7 +153,38 @@ const Playlist: FC = () => {
   }
 
   function sortTracks(filter: string) {
-    console.log(filter);
+    let sortedTracks: Track[];
+    if (filter === 'artists') {
+      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compareArtists(filter)) : tracks.sort(compareArtists(filter)).reverse();
+    } else if (filter === 'name') {
+      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compare(filter)) : tracks.sort(compare(filter)).reverse();
+    } else {
+      sortedTracks = (sortTracksOrder === 0 || sortTracksOrder === -1) ? tracks.sort(compare(filter)) : tracks.sort(compare(filter)).reverse();
+    }
+    setTracks(sortedTracks);
+    setSortTracksOrder((sortTracksOrder === 0 || sortTracksOrder === -1) ? 1 : -1);
+  }
+
+  function compare(filter: string) {
+    return function (a: any, b: any) {
+      if (typeof a[filter] === 'string') {
+        if (a[filter].toUpperCase() < b[filter].toUpperCase()) { return -1; }
+        else if (a[filter].toUpperCase() > b[filter].toUpperCase()) { return 1; }
+        return 0;
+      } else {
+        if (a[filter] < b[filter]) { return -1; }
+        else if (a[filter] > b[filter]) { return 1; }
+        return 0;
+      }
+    }
+  }
+
+  function compareArtists(filter: string) {
+    return function (a: any, b: any) {
+      if (a[filter][0].name.toUpperCase() < b[filter][0].name.toUpperCase()) { return -1; }
+      else if (a[filter][0].name.toUpperCase() > b[filter][0].name.toUpperCase()) { return 1; }
+      return 0;
+    }
   }
 
   // DISPLAY TRACKS
@@ -184,15 +217,15 @@ const Playlist: FC = () => {
         <table className="table text-light">
           <thead className="center tableHeader">
             <tr>
-              <th><button className="headerButton" onClick={() => sortTracks('name')}>Song Name</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('artists[0]')}>Artists</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('tempo')}>Tempo</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('valence')}>Valence</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('energy')}>Energy</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('danceability')}>Danceability</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('mode')}>Mode</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('key')}>Key</button></th>
-              <th><button className="headerButton" onClick={() => sortTracks('dateAdded')}>Date Added</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('name')}>Song Name⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('artists')}>Artists⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('tempo')}>Tempo⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('valence')}>Valence⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('energy')}>Energy⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('danceability')}>Danceability⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('mode')}>Mode⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('key')}>Key⇵</button></th>
+              <th><button className="headerButton" onClick={() => sortOrder('dateAdded')}>Date Added⇵</button></th>
             </tr>
           </thead>
           <tbody className="">
