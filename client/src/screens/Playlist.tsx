@@ -25,6 +25,7 @@ interface Track {
   danceability: number;
   mode: number;
   key: number;
+  selected: boolean;
 };
 
 interface Artist {
@@ -37,6 +38,7 @@ const Playlist: FC = () => {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [playlist, setPlaylist] = useState<PlaylistObj>();
   const [sortTracksOrder, setSortTracksOrder] = useState(0);
+  const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
   const sortOrder = (filter: string) => sortTracks(filter);
   const accessToken = sessionStorage.getItem("accessToken");
 
@@ -73,6 +75,20 @@ const Playlist: FC = () => {
     }
   });
 
+  const handleChange = (track: Track) => {
+    track.selected = !track.selected;
+    if (!track.selected) { 
+      setSelectedTracks(selectedTracks => selectedTracks.filter(curTrack => { return curTrack.id !== track.id }));
+    } else {
+      let found = selectedTracks.findIndex(curTrack => curTrack.id === track.id);
+      if (found === -1) { selectedTracks.push(track); }
+    }
+  };
+
+  const handleSubmit = () => {
+    console.log(selectedTracks);
+  };
+
   function formatTracks(resTracks: any) {
     let shapedTracks: Track[] = [];
     shapedTracks = resTracks.map((track: any) => ({
@@ -86,12 +102,10 @@ const Playlist: FC = () => {
       energy: 0,
       danceability: 0,
       mode: 0,
-      key: 0.
+      key: 0
     }));
     audioFeatures(shapedTracks);
   }
-
-
 
   // shape artsits 
   function _formatArtists(artists: any) {
@@ -101,7 +115,6 @@ const Playlist: FC = () => {
       }))
     )
   }
-
 
   // async processes to retrieve all audio features
   async function audioFeatures(rawTracks: Track[]) {
@@ -148,6 +161,7 @@ const Playlist: FC = () => {
           track.danceability = feature.danceability;
           track.mode = feature.mode;
           track.key = feature.key;
+          track.selected = false;
         }
       })
     })
@@ -183,14 +197,7 @@ const Playlist: FC = () => {
   }
 
   function formatDate(date: string) {
-    // 2021-10-14T05:26:10Z
-    // const options: any = {
-    //   year: 'numeric',
-    //   month: 'short',
-    //   day: 'numeric',
-    // };
     let datetime: Date = new Date(date);
-
     return datetime.toLocaleDateString();
   }
 
@@ -200,7 +207,7 @@ const Playlist: FC = () => {
     let trackComp: any = [];
     trackComp = tracks.map((track: any) => (
       <tr key={track.id} style={ {padding: "10px"} }>
-        <td><input type="checkbox"/></td>
+        <td><input id={track.id} name={track.id} type="checkbox" value={track.selected} onChange={() => handleChange(track)}/></td>
         <td style={{ padding: "10px", minWidth: "30px" }}>{track.name}</td>
         <td style={{ padding: "10px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
         <td style={{ padding: "10px" }}>{track.tempo}</td>
@@ -220,6 +227,7 @@ const Playlist: FC = () => {
       <div className="text-center text-success">
         <h2>{playlist ? playlist.name : "No Playlist"}</h2>
         <p>Total Tracks: {tracks ? tracks.length : "0"}</p>
+        <button type="button" className="btn btn-success btn-lg" onClick={handleSubmit}>Make New Playlist</button>
       </div>
       <div className="d-flex justify-content-center">
         <table className="table text-light">

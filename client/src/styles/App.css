@@ -8,3 +8,8 @@ body {
   border: none;   
   color: skyblue
 }
+
+.submitButton {
+  align-content: center;
+  text-align: center;
+}
