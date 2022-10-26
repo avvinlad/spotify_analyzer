@@ -207,16 +207,16 @@ const Playlist: FC = () => {
     let trackComp: any = [];
     trackComp = tracks.map((track: any) => (
       <tr key={track.id} style={ {padding: "10px"} }>
-        <td><input id={track.id} name={track.id} type="checkbox" value={track.selected} onChange={() => handleChange(track)}/></td>
-        <td style={{ padding: "10px", minWidth: "30px" }}>{track.name}</td>
-        <td style={{ padding: "10px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
+        <td style={{ textAlign: "center" }}><input className="inputButton" id={track.id} name={track.id} type="checkbox" value={track.selected} onChange={() => handleChange(track)}/></td>
+        <td style={{ padding: "5px", minWidth: "30px" }}>{track.name}</td>
+        <td style={{ padding: "5px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
         <td style={{ padding: "10px" }}>{track.tempo}</td>
         <td style={{ padding: "10px" }}>{track.valence}</td>
         <td style={{ padding: "10px" }}>{track.energy}</td>
         <td style={{ padding: "10px" }}>{track.danceability}</td>
         <td style={{ padding: "10px" }}>{track.mode}</td>
         <td style={{ padding: "10px" }}>{track.key}</td>
-        <td style={{ padding: "2px" }}>{formatDate(track.dateAdded)}</td>
+        <td style={{ textAlign: "center" }}>{formatDate(track.dateAdded)}</td>
       </tr>
     ));
     return trackComp;
@@ -233,7 +233,7 @@ const Playlist: FC = () => {
         <table className="table text-light">
           <thead className="center tableHeader">
             <tr>
-              <th className="headerButton">Select</th>
+              <th className="headerButton" style={{ textDecoration: "none" }}>Select</th>
               <th><button className="headerButton" onClick={() => sortOrder('name')}>Song Name⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('artists')}>Artists⇵</button></th>
               <th><button className="headerButton" onClick={() => sortOrder('tempo')}>Tempo⇵</button></th>

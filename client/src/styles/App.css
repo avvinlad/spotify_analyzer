@@ -6,10 +6,14 @@ body {
   background-color: Transparent;
   background-repeat:no-repeat;
   border: none;   
-  color: skyblue
+  color: #068758
 }
 
 .submitButton {
   align-content: center;
   text-align: center;
+}
+
+td {
+  vertical-align: center;
 }
