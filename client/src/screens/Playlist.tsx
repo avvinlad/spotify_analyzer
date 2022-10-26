@@ -219,7 +219,8 @@ const Playlist: FC = () => {
         <td style={{ textAlign: "center" }}>{formatDate(track.dateAdded)}</td>
       </tr>
     ));
-    return trackComp;
+    // reverse function makes it so the order is from newest (top) to lowest (bottom)
+    return trackComp.reverse();
   }
 
   return (  
