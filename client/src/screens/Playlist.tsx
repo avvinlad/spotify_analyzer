@@ -210,12 +210,12 @@ const Playlist: FC = () => {
         <td style={{ textAlign: "center" }}><input className="inputButton" id={track.id} name={track.id} type="checkbox" value={track.selected} onChange={() => handleChange(track)}/></td>
         <td style={{ padding: "5px", minWidth: "30px" }}>{track.name}</td>
         <td style={{ padding: "5px" }}>{track.artists.map((artist: Artist) => artist.name).join(", ")}</td>
-        <td style={{ padding: "10px" }}>{track.tempo}</td>
-        <td style={{ padding: "10px" }}>{track.valence}</td>
-        <td style={{ padding: "10px" }}>{track.energy}</td>
-        <td style={{ padding: "10px" }}>{track.danceability}</td>
-        <td style={{ padding: "10px" }}>{track.mode}</td>
-        <td style={{ padding: "10px" }}>{track.key}</td>
+        <td>{track.tempo}</td>
+        <td>{track.valence}</td>
+        <td>{track.energy}</td>
+        <td>{track.danceability}</td>
+        <td>{track.mode}</td>
+        <td>{track.key}</td>
         <td style={{ textAlign: "center" }}>{formatDate(track.dateAdded)}</td>
       </tr>
     ));
