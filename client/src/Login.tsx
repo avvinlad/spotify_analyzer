@@ -10,6 +10,8 @@ const SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative",
   "user-read-currently-playing",
+  "playlist-modify-public",
+  "playlist-modify-private"
 ];
 
 const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPES.join("%20")}`

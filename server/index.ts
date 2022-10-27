@@ -163,6 +163,31 @@ app.get('/getTrackFeatures', async (req: any, res: any) => {
 });
 
 
+// CREATES A NEW PLAYLIST
+app.post('/createPlaylist', async (req: any, res: any) => {
+  const accessToken = req.body.accessToken;
+  const userID = req.body.userID; 
+  const playlistName = req.body.playlistName;
+  const playlistDesc = req.body.playlistDesc;
+  
+  let url: any = `https://api.spotify.com/v1/users/${userID}/playlists`;
+  let config = {
+    headers: { 
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    data: {
+      'name': playlistName,
+      'description': playlistDesc
+    }
+  }
+  // console.log(JSON.stringify(config));
+  Axios.post(url, config)
+  .then((response: any) => {
+    console.log(response.body);
+  })
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log("Server is running...");

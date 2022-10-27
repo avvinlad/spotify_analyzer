@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/App.css";
 import useAuth from '../useAuth';
 import Axios from 'axios';
-import React from 'react'
 
 type Code = {
     code: string;

@@ -85,8 +85,8 @@ const Playlist: FC = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log(selectedTracks);
+  const handleSubmit = async () => {
+    createPlaylist();
   };
 
   function formatTracks(resTracks: any) {
@@ -166,6 +166,13 @@ const Playlist: FC = () => {
       })
     })
     setTracks(updatedTracks);
+  }
+
+  async function createPlaylist() {
+    let userID = 'avinladd';
+    let playlistName = 'API Playlist';
+    let playlistDesc = 'This is the API desription';
+    let res = await Axios.post("http://localhost:3001/createPlaylist", { accessToken, userID, playlistName, playlistDesc })
   }
 
   function sortTracks(filter: string) {
