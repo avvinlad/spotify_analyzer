@@ -6,10 +6,8 @@ import "./styles/App.css"
 const CLIENT_ID = "be00f3272ed442c8b795bbba604b62a4";
 const REDIRECT_URI = "http://localhost:3000";
 const SCOPES = [
-  "streaming",
   "playlist-read-private",
   "playlist-read-collaborative",
-  "user-read-currently-playing",
   "playlist-modify-public",
   "playlist-modify-private"
 ];

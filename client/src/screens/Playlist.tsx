@@ -168,11 +168,11 @@ const Playlist: FC = () => {
     setTracks(updatedTracks);
   }
 
-  async function createPlaylist() {
+  function createPlaylist() {
     let userID = 'avinladd';
     let playlistName = 'API Playlist';
     let playlistDesc = 'This is the API desription';
-    let res = await Axios.post("http://localhost:3001/createPlaylist", { accessToken, userID, playlistName, playlistDesc })
+    let res = Axios.post("http://localhost:3001/createPlaylist", { accessToken, userID, playlistName, playlistDesc });
   }
 
   function sortTracks(filter: string) {
