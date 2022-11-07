@@ -159,6 +159,25 @@ app.post('/createPlaylist', (req, res) => {
     const userID = req.body.userID;
     const playlistName = req.body.playlistName;
     const playlistDesc = req.body.playlistDesc;
+    console.log(`User ID: ${userID} --- Playlist Name: ${playlistName} --- Playlist Desc: ${playlistDesc}`);
+    let url = `	https://api.spotify.com/v1/users/${userID}/playlists`;
+    let config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        name: playlistName,
+        description: playlistDesc,
+        public: false
+    };
+    Axios.post(url, config)
+        .then((response) => {
+        console.log(response.statusCode);
+    })
+        .catch((error) => {
+        console.log(error.response.status);
+    });
 });
 const PORT = 3001;
 app.listen(PORT, () => {
