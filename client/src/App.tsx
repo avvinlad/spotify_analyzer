@@ -8,15 +8,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 const code: string = new URLSearchParams(window.location.search).get('code') ?? '';
 
 const App: FC = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-          <Route path="/" element={code ? <Dashboard code={code}/> : <Login/>}/>
-          <Route path="/playlist/:playlistID" element={<Playlist/>}/>
-          <Route path="*" element={<Error/>}/>
-      </Routes>
-    </BrowserRouter> 
-  );
-}
-
-export default App
+	return (
+		<BrowserRouter>
+		<Routes>
+		<Route path="/" element={code ? <Dashboard code={code}/> : <Login/>}/>
+		<Route path="/playlist/:playlistID" element={<Playlist/>}/>
+		<Route path="*" element={<Error/>}/>
+		</Routes>
+		</BrowserRouter> 
+		);
+	}
+	
+	export default App
