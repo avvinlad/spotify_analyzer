@@ -19,7 +19,7 @@ interface Track {
   artists: string;
   dateAdded: string;
   tempo: number;
-  acousticness: number;
+  acoustics: number;
   valence: number;
   energy: number;
   danceability: number;
@@ -96,6 +96,8 @@ const Playlist: FC = () => {
     }
   };
 
+  console.log(tracks);
+
   const handleSubmit = async () => {
     createPlaylist();
   };
@@ -108,7 +110,7 @@ const Playlist: FC = () => {
       artists: _formatArtists(track.track.artists),
       dateAdded: track.added_at,
       tempo: 0,
-      acousticness: 0,
+      acoustics: 0,
       valence: 0,
       energy: 0,
       danceability: 0,
@@ -118,7 +120,7 @@ const Playlist: FC = () => {
     audioFeatures(shapedTracks);
   }
 
-  // shape artsits
+  // shape artists
   function _formatArtists(artists: any) {
     return artists.map(
       (artist: any): Artist => ({
@@ -174,7 +176,7 @@ const Playlist: FC = () => {
       audioFeatures.forEach((feature: any) => {
         if (track.id === feature.id) {
           track.tempo = feature.tempo;
-          track.acousticness = feature.acousticness;
+          track.acoustics = feature.acoustics;
           track.energy = feature.energy;
           track.valence = feature.valence;
           track.danceability = feature.danceability;
@@ -190,7 +192,7 @@ const Playlist: FC = () => {
   function createPlaylist() {
     let userID = "avinladd";
     let playlistName = "API Playlist";
-    let playlistDesc = "This is the API desription";
+    let playlistDesc = "This is the API description";
     Axios.post("http://localhost:3001/createPlaylist", {
       accessToken,
       userID,
@@ -199,46 +201,31 @@ const Playlist: FC = () => {
     });
   }
 
-  function sortTracks(filter: string) {
-    let sortedTracks: Track[];
-    sortedTracks =
-      sortTracksOrder === 0 || sortTracksOrder === -1
-        ? tracks.sort(compare(filter))
-        : tracks.sort(compare(filter)).reverse();
-
+  function sortTracks(filter: any) {
+    let sortedTracks: Track[] = [];
+    if (filter !== "artists") {
+      if (typeof tracks[filter] === "string") {
+        if (sortTracksOrder === -1) {
+          sortedTracks = tracks.sort((a: any, b: any) =>
+            b[filter].localeCompare(a[filter])
+          );
+        } else {
+          sortedTracks = tracks.sort((a: any, b: any) =>
+            a[filter].localeCompare(b[filter])
+          );
+        }
+      } else if (typeof tracks[filter] === "number") {
+        if (sortTracksOrder === -1) {
+          sortedTracks = tracks.sort((a: any, b: any) => a[filter] - b[filter]);
+        } else {
+          sortedTracks = tracks.sort((a: any, b: any) => b[filter] - a[filter]);
+        }
+      }
+    }
     setTracks(sortedTracks);
     setSortTracksOrder(
       sortTracksOrder === 0 || sortTracksOrder === -1 ? 1 : -1
     );
-  }
-
-  function compare(filter: string) {
-    return function (a: any, b: any) {
-      if (typeof a[filter] === "string") {
-        if (a[filter].toUpperCase() < b[filter].toUpperCase()) {
-          return -1;
-        } else if (a[filter].toUpperCase() > b[filter].toUpperCase()) {
-          return 1;
-        }
-        return 0;
-      } else if (filter === "artists") {
-        if (a[filter][0].name.toUpperCase() < b[filter][0].name.toUpperCase()) {
-          return -1;
-        } else if (
-          a[filter][0].name.toUpperCase() > b[filter][0].name.toUpperCase()
-        ) {
-          return 1;
-        }
-        return 0;
-      } else {
-        if (a[filter] < b[filter]) {
-          return -1;
-        } else if (a[filter] > b[filter]) {
-          return 1;
-        }
-        return 0;
-      }
-    };
   }
 
   function formatDate(date: string) {
@@ -287,8 +274,7 @@ const Playlist: FC = () => {
         <button
           type="button"
           className="btn btn-success btn-lg"
-          onClick={handleSubmit}
-        >
+          onClick={handleSubmit}>
           Make New Playlist
         </button>
       </div>
@@ -302,72 +288,63 @@ const Playlist: FC = () => {
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("name")}
-                >
+                  onClick={() => sortOrder("name")}>
                   Song Name⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("artists")}
-                >
+                  onClick={() => sortOrder("artists")}>
                   Artists⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("tempo")}
-                >
+                  onClick={() => sortOrder("tempo")}>
                   Tempo⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("valence")}
-                >
+                  onClick={() => sortOrder("valence")}>
                   Valence⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("energy")}
-                >
+                  onClick={() => sortOrder("energy")}>
                   Energy⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("danceability")}
-                >
+                  onClick={() => sortOrder("danceability")}>
                   Dance⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("mode")}
-                >
+                  onClick={() => sortOrder("mode")}>
                   Mode⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("key")}
-                >
+                  onClick={() => sortOrder("key")}>
                   Key⇵
                 </button>
               </th>
               <th>
                 <button
                   className="headerButton"
-                  onClick={() => sortOrder("dateAdded")}
-                >
+                  onClick={() => sortOrder("dateAdded")}>
                   Date Added⇵
                 </button>
               </th>
