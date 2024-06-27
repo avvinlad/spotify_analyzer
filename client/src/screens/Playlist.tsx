@@ -3,7 +3,10 @@ import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/App.css';
 import { useParams } from 'react-router-dom';
-import { sortTracksAscending, sortTracksDescending } from '../helpers/sorting';
+import {
+	sortTracksAscending,
+	sortTracksDescending,
+} from '../helpers/trackHelper';
 import Axios from 'axios';
 
 interface PlaylistObj {
@@ -17,7 +20,7 @@ interface PlaylistObj {
 interface Track {
 	id: string;
 	name: string;
-	artists: string;
+	artists: object[];
 	dateAdded: string;
 	tempo: number;
 	acoustics: number;
