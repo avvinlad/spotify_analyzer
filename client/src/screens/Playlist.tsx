@@ -39,9 +39,10 @@ const Playlist: FC = () => {
   const [playlist, setPlaylist] = useState<PlaylistObj>();
   const [sortTracksOrder, setSortTracksOrder] = useState(0);
   const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
-  const sortOrder = (filter: string) => sortTracks(filter);
   const accessToken = sessionStorage.getItem("accessToken");
-
+  
+  const sortOrder = (filter: string) => sortTracks(filter);
+  
   useEffect(() => {
     if (accessToken && playlistID) {
       Axios.get("http://localhost:3001/getPlaylistInfo", {
@@ -96,7 +97,6 @@ const Playlist: FC = () => {
     }
   };
 
-  console.log(tracks);
 
   const handleSubmit = async () => {
     createPlaylist();
@@ -202,30 +202,73 @@ const Playlist: FC = () => {
   }
 
   function sortTracks(filter: any) {
-    let sortedTracks: Track[] = [];
-    if (filter !== "artists") {
-      if (typeof tracks[filter] === "string") {
-        if (sortTracksOrder === -1) {
-          sortedTracks = tracks.sort((a: any, b: any) =>
-            b[filter].localeCompare(a[filter])
-          );
-        } else {
-          sortedTracks = tracks.sort((a: any, b: any) =>
-            a[filter].localeCompare(b[filter])
-          );
-        }
-      } else if (typeof tracks[filter] === "number") {
-        if (sortTracksOrder === -1) {
-          sortedTracks = tracks.sort((a: any, b: any) => a[filter] - b[filter]);
-        } else {
-          sortedTracks = tracks.sort((a: any, b: any) => b[filter] - a[filter]);
-        }
-      }
+    let sortedTracks: any;
+    if (sortTracksOrder === 0) 
+      sortedTracks = sortTracksAscending(tracks, filter)
+    else
+      sortedTracks = sortTracksDescending(tracks, filter)
+    setTracks(sortedTracks)
+    setSortTracksOrder((sortTracksOrder + 1) % 2)
+  }
+
+  function sortTracksAscending(tracks: any, filter: string) {
+    const sortedTracks = JSON.parse(JSON.stringify(tracks))
+    if (filter === "artists") {
+      console.log(`artists: ${tracks.artists}`)
+      sortedTracks.sort((a: any, b: any) => {
+          var filterA = a.artists.join(', ').toUpperCase(); // convert to uppercase for case-insensitive sorting
+          var filterB = b.artists.join(', ').toUpperCase(); // convert to uppercase for case-insensitive sorting
+          // ascending order
+          if (filterA > filterB)
+            return -1;
+          if (filterA < filterB)
+            return 1;
+          return 0;
+      })
     }
-    setTracks(sortedTracks);
-    setSortTracksOrder(
-      sortTracksOrder === 0 || sortTracksOrder === -1 ? 1 : -1
-    );
+    else {
+      sortedTracks.sort((a: any, b: any) => {
+          var filterA = typeof a[filter][0] === "string" ? a[filter].toUpperCase() : a[filter]; // convert to uppercase for case-insensitive sorting
+          var filterB = typeof b[filter][0] === "string" ? b[filter].toUpperCase() : b[filter]; // convert to uppercase for case-insensitive sorting
+          // ascending order
+          if (filterA > filterB)
+            return -1;
+          if (filterA < filterB)
+            return 1;
+          return 0;
+        })
+    }
+    return sortedTracks;
+  }
+
+  function sortTracksDescending(tracks: any, filter: string) {
+    const sortedTracks = JSON.parse(JSON.stringify(tracks))
+    if (filter === "artists") {
+      console.log(`artists: ${tracks.artists}`)
+      sortedTracks.sort((a: any, b: any) => {
+          var filterA = a.artists.join(', ').toUpperCase(); // convert to uppercase for case-insensitive sorting
+          var filterB = b.artists.join(', ').toUpperCase(); // convert to uppercase for case-insensitive sorting
+          // ascending order
+          if (filterA < filterB)
+            return -1;
+          if (filterA > filterB)
+            return 1;
+          return 0;
+      })
+    }
+    else {
+      sortedTracks.sort((a: any, b: any) => {
+          var filterA = typeof a[filter][0] === "string" ? a[filter].toUpperCase() : a[filter]; // convert to uppercase for case-insensitive sorting
+          var filterB = typeof b[filter][0] === "string" ? b[filter].toUpperCase() : b[filter]; // convert to uppercase for case-insensitive sorting
+          // descending order
+          if (filterA < filterB)
+            return -1;
+          if (filterA > filterB)
+            return 1;
+          return 0;
+        })
+      return sortedTracks;
+    }
   }
 
   function formatDate(date: string) {
@@ -271,12 +314,16 @@ const Playlist: FC = () => {
       <div className="text-center text-success">
         <h2>{playlist ? playlist.name : "No Playlist"}</h2>
         <p>Total Tracks: {tracks ? tracks.length : "0"}</p>
-        <button
-          type="button"
-          className="btn btn-success btn-lg"
-          onClick={handleSubmit}>
-          Make New Playlist
-        </button>
+        {
+          /*
+          <button
+            type="button"
+            className="btn btn-success btn-lg"
+            onClick={handleSubmit}>
+            Make New Playlist
+          </button>
+          */
+        }
       </div>
       <div className="d-flex justify-content-center">
         <table className="table text-light">
