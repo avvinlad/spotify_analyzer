@@ -14,7 +14,7 @@ function sortTracksAscending(tracks: any, filter: string) {
 			return 0;
 		});
 	} else {
-		sortedTracks = _sortByFilter(sortedTracks, filter);
+		sortedTracks = _sortByFilter(sortedTracks, filter, true);
 	}
 	return sortedTracks;
 }
@@ -35,40 +35,38 @@ function sortTracksDescending(tracks: any, filter: string) {
 			return 0;
 		});
 	} else {
-		sortedTracks = _sortByFilter(sortedTracks, filter, false);
+		sortedTracks = _sortByFilter(sortedTracks, filter);
 	}
 	return sortedTracks;
 }
 
+// SORT ARTISTS - ASCENDING
 function _sortArtistsAscending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
 		var filterA = a.name.toUpperCase();
 		var filterB = b.name.toUpperCase();
 
-		if (filterA < filterB) return -1;
-		if (filterA > filterB) return 1;
-		return 0;
+		return _filterAscending(filterA, filterB);
 	});
 
 	return sortedArtists;
 }
 
+// SORT ARTISTS - DESCENDING
 function _sortArtistsDescending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
 		var filterA = a.name.toUpperCase();
 		var filterB = b.name.toUpperCase();
 
-		if (filterA > filterB) return -1;
-		if (filterA < filterB) return 1;
-		return 0;
+		return _filterDescending(filterA, filterB);
 	});
 
 	return sortedArtists;
 }
 
-function _sortByFilter(elements: any, filter: string, ascending = true) {
+function _sortByFilter(elements: any, filter: string, ascending = false) {
 	const sortedElements = JSON.parse(JSON.stringify(elements));
 
 	sortedElements.sort((a: any, b: any) => {
@@ -81,17 +79,26 @@ function _sortByFilter(elements: any, filter: string, ascending = true) {
 				? b[filter].toUpperCase()
 				: b[filter];
 
-		if (ascending) {
-			if (filterA > filterB) return -1;
-			if (filterA < filterB) return 1;
-		} else if (!ascending) {
-			if (filterA < filterB) return -1;
-			if (filterA > filterB) return 1;
+		if (!ascending) {
+			return _filterDescending(filterA, filterB);
 		}
-		return 0;
+
+		return _filterAscending(filterA, filterB);
 	});
 
 	return sortedElements;
+}
+
+function _filterAscending(a: any, b: any) {
+	if (a > b) return -1;
+	if (a < b) return 1;
+	return 0;
+}
+
+function _filterDescending(a: any, b: any) {
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
 }
 
 export { sortTracksAscending, sortTracksDescending };
