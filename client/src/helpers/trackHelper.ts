@@ -6,9 +6,9 @@ function sortTracksAscending(tracks: any, filter: string) {
 			sortedTracks[index].artists = sortedArtists;
 		});
 		sortedTracks.sort((a: any, b: any) => {
-			var filterA = a.artists[0].name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-			var filterB = b.artists[0].name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-			// ascending order
+			var filterA = a.artists[0].name.toUpperCase();
+			var filterB = b.artists[0].name.toUpperCase();
+
 			if (filterA > filterB) return -1;
 			if (filterA < filterB) return 1;
 			return 0;
@@ -20,7 +20,6 @@ function sortTracksAscending(tracks: any, filter: string) {
 }
 
 function sortTracksDescending(tracks: any, filter: string) {
-	console.log(`it hit this?`); // this was hit
 	let sortedTracks = JSON.parse(JSON.stringify(tracks));
 	if (filter === 'artists') {
 		sortedTracks.forEach((track: any, index: number) => {
@@ -28,9 +27,9 @@ function sortTracksDescending(tracks: any, filter: string) {
 			sortedTracks[index].artists = sortedArtists;
 		});
 		sortedTracks.sort((a: any, b: any) => {
-			var filterA = a.artists[0].name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-			var filterB = b.artists[0].name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-			// ascending order
+			var filterA = a.artists[0].name.toUpperCase();
+			var filterB = b.artists[0].name.toUpperCase();
+
 			if (filterA < filterB) return -1;
 			if (filterA > filterB) return 1;
 			return 0;
@@ -44,9 +43,9 @@ function sortTracksDescending(tracks: any, filter: string) {
 function _sortArtistsAscending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
-		var filterA = a.name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-		var filterB = b.name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-		// ascending order
+		var filterA = a.name.toUpperCase();
+		var filterB = b.name.toUpperCase();
+
 		if (filterA < filterB) return -1;
 		if (filterA > filterB) return 1;
 		return 0;
@@ -58,9 +57,9 @@ function _sortArtistsAscending(artists: any) {
 function _sortArtistsDescending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
-		var filterA = a.name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-		var filterB = b.name.toUpperCase(); // convert to uppercase for case-insensitive sorting
-		// ascending order
+		var filterA = a.name.toUpperCase();
+		var filterB = b.name.toUpperCase();
+
 		if (filterA > filterB) return -1;
 		if (filterA < filterB) return 1;
 		return 0;
@@ -76,11 +75,11 @@ function _sortByFilter(elements: any, filter: string, ascending = true) {
 		var filterA =
 			typeof a[filter][0] === 'string'
 				? a[filter].toUpperCase()
-				: a[filter]; // convert to uppercase for case-insensitive sorting
+				: a[filter];
 		var filterB =
 			typeof b[filter][0] === 'string'
 				? b[filter].toUpperCase()
-				: b[filter]; // convert to uppercase for case-insensitive sorting
+				: b[filter];
 
 		if (ascending) {
 			if (filterA > filterB) return -1;
