@@ -242,8 +242,7 @@ const Playlist: FC = () => {
 				</td>
 			</tr>
 		));
-		// reverse function makes it so the order is from newest (top) to lowest (bottom)
-		return trackComp.reverse();
+		return trackComp;
 	}
 
 	return (
