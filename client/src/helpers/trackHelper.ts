@@ -1,3 +1,10 @@
+function formatArtists(artists: any) {
+	return artists.map((artist: any): any => ({
+		id: artist.id,
+		name: artist.name
+	}));
+}
+
 function sortTracksAscending(tracks: any, filter: string) {
 	let sortedTracks = JSON.parse(JSON.stringify(tracks));
 	if (filter === 'artists') {
@@ -101,4 +108,4 @@ function _filterDescending(a: any, b: any) {
 	return 0;
 }
 
-export { sortTracksAscending, sortTracksDescending };
+export { sortTracksAscending, sortTracksDescending, formatArtists };

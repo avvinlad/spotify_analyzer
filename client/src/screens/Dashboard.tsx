@@ -21,7 +21,7 @@ const Dashboard: FC<Code> = ({ code }) => {
 	useEffect(() => {
 		if (accessToken) {
 			Axios.get('http://localhost:3001/getPlaylists', {
-				params: { accessToken: accessToken },
+				params: { accessToken: accessToken }
 			})
 				.then((res) => {
 					setPlaylists(res.data.items);

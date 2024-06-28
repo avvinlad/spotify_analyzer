@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import {
 	sortTracksAscending,
 	sortTracksDescending,
+	formatArtists
 } from '../helpers/trackHelper';
 import Axios from 'axios';
 
@@ -50,17 +51,17 @@ const Playlist: FC = () => {
 	useEffect(() => {
 		if (accessToken && playlistID) {
 			Axios.get('http://localhost:3001/getPlaylistInfo', {
-				params: { accessToken, playlistID },
+				params: { accessToken, playlistID }
 			})
 				.then((res) => {
-					const pl: PlaylistObj = {
+					const playlist: PlaylistObj = {
 						id: res.data.id,
 						name: res.data.name,
 						description: res.data.description,
 						uri: res.data.uri,
-						total: res.data.tracks.total,
+						total: res.data.tracks.total
 					};
-					setPlaylist(pl);
+					setPlaylist(playlist);
 				})
 				.catch(() => {
 					window.location.href = '/';
@@ -72,7 +73,7 @@ const Playlist: FC = () => {
 		if (playlist && tracks && tracks.length < playlist.total) {
 			const totalTracks = playlist?.total;
 			Axios.get('http://localhost:3001/getPlaylistTracks', {
-				params: { accessToken, playlistID, totalTracks },
+				params: { accessToken, playlistID, totalTracks }
 			})
 				.then((res) => {
 					formatTracks(res.data);
@@ -106,7 +107,7 @@ const Playlist: FC = () => {
 		shapedTracks = resTracks.map((track: any) => ({
 			id: track.track.id,
 			name: track.track.name,
-			artists: _formatArtists(track.track.artists),
+			artists: formatArtists(track.track.artists),
 			dateAdded: track.added_at,
 			tempo: 0,
 			acoustics: 0,
@@ -114,19 +115,9 @@ const Playlist: FC = () => {
 			energy: 0,
 			danceability: 0,
 			mode: 0,
-			key: 0,
+			key: 0
 		}));
 		audioFeatures(shapedTracks);
-	}
-
-	// shape artists
-	function _formatArtists(artists: any) {
-		return artists.map(
-			(artist: any): Artist => ({
-				id: artist.id,
-				name: artist.name,
-			})
-		);
 	}
 
 	// async processes to retrieve all audio features
@@ -156,7 +147,7 @@ const Playlist: FC = () => {
 	// get request for audio features
 	async function _getAudioFeatures(tracksID: string) {
 		let res = await Axios.get('http://localhost:3001/getTrackFeatures', {
-			params: { accessToken, tracksID },
+			params: { accessToken, tracksID }
 		});
 		if (res.status !== 200) {
 			return null;
