@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/App.css';
 import { useParams } from 'react-router-dom';
 import {
 	sortTracksAscending,

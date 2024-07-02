@@ -1,7 +1,6 @@
 import { useEffect, useState, FC } from 'react';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/App.css';
 import useAuth from '../useAuth';
 import Axios from 'axios';
 
