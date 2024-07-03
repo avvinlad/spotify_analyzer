@@ -1,6 +1,4 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 import {
 	sortTracksAscending,
@@ -195,8 +193,8 @@ const Playlist: FC = () => {
 	function sortTracks(filter: any) {
 		let sortedTracks: any;
 		if (sortTracksOrder === 0)
-			sortedTracks = sortTracksAscending(tracks, filter);
-		else sortedTracks = sortTracksDescending(tracks, filter);
+			sortedTracks = sortTracksDescending(tracks, filter);
+		else sortedTracks = sortTracksAscending(tracks, filter);
 		setTracks(sortedTracks);
 		setSortTracksOrder((sortTracksOrder + 1) % 2);
 	}
@@ -245,99 +243,69 @@ const Playlist: FC = () => {
 	}
 
 	return (
-		<Container>
-			<div className="text-center text-success">
+		<div>
+			<div>
 				<h2>{playlist ? playlist.name : 'No Playlist'}</h2>
 				<p>Total Tracks: {tracks ? tracks.length : '0'}</p>
 			</div>
-			<div className="d-flex justify-content-center">
-				<table className="table text-light">
-					<thead className="center tableHeader">
+			<div>
+				<table>
+					<thead>
 						<tr>
-							<th
-								className="headerButton"
-								style={{ textDecoration: 'none' }}
-							>
-								Select
-							</th>
+							<th style={{ textDecoration: 'none' }}>Select</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('name')}
-								>
+								<button onClick={() => sortOrder('name')}>
 									Song Name⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('artists')}
-								>
+								<button onClick={() => sortOrder('artists')}>
 									Artists⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('tempo')}
-								>
+								<button onClick={() => sortOrder('tempo')}>
 									Tempo⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('valence')}
-								>
+								<button onClick={() => sortOrder('valence')}>
 									Valence⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('energy')}
-								>
+								<button onClick={() => sortOrder('energy')}>
 									Energy⇵
 								</button>
 							</th>
 							<th>
 								<button
-									className="headerButton"
 									onClick={() => sortOrder('danceability')}
 								>
 									Dance⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('mode')}
-								>
+								<button onClick={() => sortOrder('mode')}>
 									Mode⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('key')}
-								>
+								<button onClick={() => sortOrder('key')}>
 									Key⇵
 								</button>
 							</th>
 							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('dateAdded')}
-								>
+								<button onClick={() => sortOrder('dateAdded')}>
 									Date Added⇵
 								</button>
 							</th>
 						</tr>
 					</thead>
-					<tbody className="">{tracks ? displayTracks() : ''}</tbody>
+					<tbody>{tracks ? displayTracks() : ''}</tbody>
 				</table>
 			</div>
-		</Container>
+		</div>
 	);
 };
 

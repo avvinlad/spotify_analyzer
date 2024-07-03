@@ -10,16 +10,21 @@ const code: string =
 
 const App: FC = () => {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route
-					path="/"
-					element={code ? <Dashboard code={code} /> : <Login />}
-				/>
-				<Route path="/playlist/:playlistID" element={<Playlist />} />
-				<Route path="*" element={<Error />} />
-			</Routes>
-		</BrowserRouter>
+		<div className="bg-slate-600">
+			<BrowserRouter>
+				<Routes>
+					<Route
+						path="/"
+						element={code ? <Dashboard code={code} /> : <Login />}
+					/>
+					<Route
+						path="/playlist/:playlistID"
+						element={<Playlist />}
+					/>
+					<Route path="*" element={<Error />} />
+				</Routes>
+			</BrowserRouter>
+		</div>
 	);
 };
 
