@@ -1,4 +1,7 @@
 import { useEffect, useState, FC } from 'react';
+import { Container } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/App.css';
 import useAuth from '../useAuth';
 import Axios from 'axios';
 
@@ -32,8 +35,13 @@ const Dashboard: FC<Code> = ({ code }) => {
 	if (playlists.length > 0) {
 		playlists.forEach((playlist: any) => {
 			plNames.push(
-				<div key={playlist.id} style={{ padding: '10px' }}>
+				<div
+					key={playlist.id}
+					className="d-inline-flex flex-column"
+					style={{ padding: '10px' }}
+				>
 					<a
+						className=""
 						key={playlist.id}
 						id={playlist.id}
 						href={`/playlist/${playlist.id}`}
@@ -47,8 +55,8 @@ const Dashboard: FC<Code> = ({ code }) => {
 							style={{ maxHeight: '175px', maxWidth: '175px' }}
 						/>
 					</a>
-					<div>
-						<p>{playlist.name}</p>
+					<div className="text-center text-decoration-none text-wrap">
+						<p className="text-light">{playlist.name}</p>
 					</div>
 				</div>
 			);
@@ -56,14 +64,16 @@ const Dashboard: FC<Code> = ({ code }) => {
 	}
 
 	return (
-		<div>
-			<div>
-				<h1>Playlist Dashboard</h1>
+		<Container>
+			<div className="text-center">
+				<h1 className="text-success">Playlist Dashboard</h1>
 			</div>
-			<div>
-				<div>{playlists ? plNames : 'No Playlists'}</div>
+			<div className="d-flex">
+				<div className="col">
+					{playlists ? plNames : 'No Playlists'}
+				</div>
 			</div>
-		</div>
+		</Container>
 	);
 };
 
