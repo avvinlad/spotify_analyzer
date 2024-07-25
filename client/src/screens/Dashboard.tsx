@@ -1,7 +1,4 @@
 import { useEffect, useState, FC } from 'react';
-import { Container } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/App.css';
 import useAuth from '../useAuth';
 import Axios from 'axios';
 
@@ -64,7 +61,7 @@ const Dashboard: FC<Code> = ({ code }) => {
 	}
 
 	return (
-		<Container>
+		<>
 			<div className="text-center">
 				<h1 className="text-success">Playlist Dashboard</h1>
 			</div>
@@ -73,7 +70,7 @@ const Dashboard: FC<Code> = ({ code }) => {
 					{playlists ? plNames : 'No Playlists'}
 				</div>
 			</div>
-		</Container>
+		</>
 	);
 };
 

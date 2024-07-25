@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Login from './Login';
 import Dashboard from './screens/Dashboard';
 import Playlist from './screens/Playlist';

@@ -1,7 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/App.css';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
 	sortTracksAscending,
@@ -39,7 +36,7 @@ interface Artist {
 }
 
 const Playlist: FC = () => {
-	let { playlistID } = useParams();
+	const { playlistID } = useParams();
 	const [tracks, setTracks] = useState<Track[]>([]);
 	const [playlist, setPlaylist] = useState<PlaylistObj>();
 	const [sortTracksOrder, setSortTracksOrder] = useState(0);
@@ -93,7 +90,7 @@ const Playlist: FC = () => {
 				})
 			);
 		} else {
-			let found = selectedTracks.findIndex(
+			const found = selectedTracks.findIndex(
 				(curTrack) => curTrack.id === track.id
 			);
 			if (found === -1) {
@@ -123,9 +120,9 @@ const Playlist: FC = () => {
 	// async processes to retrieve all audio features
 	async function audioFeatures(rawTracks: Track[]) {
 		if (playlist) {
-			let tracks = rawTracks.map((track) => track.id);
-			let offsets = Math.floor(tracks.length / 100) + 1;
-			let promises = [];
+			const tracks = rawTracks.map((track) => track.id);
+			const offsets = Math.floor(tracks.length / 100) + 1;
+			const promises = [];
 			let curTracks: string = '';
 			for (let chunk = 0; chunk < offsets; chunk++) {
 				curTracks = tracks
@@ -146,7 +143,7 @@ const Playlist: FC = () => {
 
 	// get request for audio features
 	async function _getAudioFeatures(tracksID: string) {
-		let res = await Axios.get('http://localhost:3001/getTrackFeatures', {
+		const res = await Axios.get('http://localhost:3001/getTrackFeatures', {
 			params: { accessToken, tracksID }
 		});
 		if (res.status !== 200) {
@@ -157,7 +154,7 @@ const Playlist: FC = () => {
 
 	// add audio features to state
 	function addAudioFeatures(shapedTracks: Track[], audioFeatures: any) {
-		let updatedTracks: Track[] = shapedTracks;
+		const updatedTracks: Track[] = shapedTracks;
 		if (!tracks && !audioFeatures) {
 			return null;
 		}
@@ -203,7 +200,7 @@ const Playlist: FC = () => {
 	}
 
 	function formatDate(date: string) {
-		let datetime: Date = new Date(date);
+		const datetime: Date = new Date(date);
 		return datetime.toLocaleDateString();
 	}
 
@@ -246,7 +243,7 @@ const Playlist: FC = () => {
 	}
 
 	return (
-		<Container>
+		<>
 			<div className="text-center text-success">
 				<h2>{playlist ? playlist.name : 'No Playlist'}</h2>
 				<p>Total Tracks: {tracks ? tracks.length : '0'}</p>
@@ -338,7 +335,7 @@ const Playlist: FC = () => {
 					<tbody className="">{tracks ? displayTracks() : ''}</tbody>
 				</table>
 			</div>
-		</Container>
+		</>
 	);
 };
 

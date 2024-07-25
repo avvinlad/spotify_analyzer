@@ -13,8 +13,8 @@ function sortTracksAscending(tracks: any, filter: string) {
 			sortedTracks[index].artists = sortedArtists;
 		});
 		sortedTracks.sort((a: any, b: any) => {
-			var filterA = a.artists[0].name.toUpperCase();
-			var filterB = b.artists[0].name.toUpperCase();
+			const filterA = a.artists[0].name.toUpperCase();
+			const filterB = b.artists[0].name.toUpperCase();
 
 			if (filterA > filterB) return -1;
 			if (filterA < filterB) return 1;
@@ -34,8 +34,8 @@ function sortTracksDescending(tracks: any, filter: string) {
 			sortedTracks[index].artists = sortedArtists;
 		});
 		sortedTracks.sort((a: any, b: any) => {
-			var filterA = a.artists[0].name.toUpperCase();
-			var filterB = b.artists[0].name.toUpperCase();
+			const filterA = a.artists[0].name.toUpperCase();
+			const filterB = b.artists[0].name.toUpperCase();
 
 			if (filterA < filterB) return -1;
 			if (filterA > filterB) return 1;
@@ -51,8 +51,8 @@ function sortTracksDescending(tracks: any, filter: string) {
 function _sortArtistsAscending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
-		var filterA = a.name.toUpperCase();
-		var filterB = b.name.toUpperCase();
+		const filterA = a.name.toUpperCase();
+		const filterB = b.name.toUpperCase();
 
 		return _filterAscending(filterA, filterB);
 	});
@@ -64,8 +64,8 @@ function _sortArtistsAscending(artists: any) {
 function _sortArtistsDescending(artists: any) {
 	const sortedArtists = JSON.parse(JSON.stringify(artists));
 	sortedArtists.sort((a: any, b: any) => {
-		var filterA = a.name.toUpperCase();
-		var filterB = b.name.toUpperCase();
+		const filterA = a.name.toUpperCase();
+		const filterB = b.name.toUpperCase();
 
 		return _filterDescending(filterA, filterB);
 	});
@@ -77,11 +77,11 @@ function _sortByFilter(elements: any, filter: string, ascending = false) {
 	const sortedElements = JSON.parse(JSON.stringify(elements));
 
 	sortedElements.sort((a: any, b: any) => {
-		var filterA =
+		const filterA =
 			typeof a[filter][0] === 'string'
 				? a[filter].toUpperCase()
 				: a[filter];
-		var filterB =
+		const filterB =
 			typeof b[filter][0] === 'string'
 				? b[filter].toUpperCase()
 				: b[filter];
