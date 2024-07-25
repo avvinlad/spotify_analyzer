@@ -1,3 +1,6 @@
+import { Button } from './components/ui/button';
+import { LogIn } from 'lucide-react';
+
 const CLIENT_ID = 'be00f3272ed442c8b795bbba604b62a4';
 const REDIRECT_URI = 'http://localhost:3000';
 const SCOPES = [
@@ -13,17 +16,13 @@ const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&
 
 export default function Login() {
 	return (
-		<div
-			className="d-flex justify-content-center align-items-center"
-			style={{ minHeight: '100vh' }}
-		>
-			<a
-				className="btn btn-success btn-lg"
-				href={AUTH_URL}
-				style={{ background: '#1DB954', border: 'none' }}
-			>
-				LOGIN WITH SPOTIFY
-			</a>
+		<div className="flex h-screen justify-center items-center">
+			<Button size="lg" className="bg-green-600">
+				<a href={AUTH_URL} className="font-semibold text-center">
+					LOGIN WITH SPOTIFY
+				</a>
+				<LogIn className="ml-2" />
+			</Button>
 		</div>
 	);
 }
