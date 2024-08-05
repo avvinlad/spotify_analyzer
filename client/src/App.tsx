@@ -10,16 +10,21 @@ const code: string =
 
 const App: FC = () => {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route
-					path="/"
-					element={code ? <Dashboard code={code} /> : <Login />}
-				/>
-				<Route path="/playlist/:playlistID" element={<Playlist />} />
-				<Route path="*" element={<Error />} />
-			</Routes>
-		</BrowserRouter>
+		<div className="flex container justify-center mx-auto w-2/3">
+			<BrowserRouter>
+				<Routes>
+					<Route
+						path="/"
+						element={code ? <Dashboard code={code} /> : <Login />}
+					/>
+					<Route
+						path="/playlist/:playlistID"
+						element={<Playlist />}
+					/>
+					<Route path="*" element={<Error />} />
+				</Routes>
+			</BrowserRouter>
+		</div>
 	);
 };
 

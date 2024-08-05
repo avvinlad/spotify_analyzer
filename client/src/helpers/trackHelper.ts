@@ -75,7 +75,6 @@ function _sortArtistsDescending(artists: any) {
 
 function _sortByFilter(elements: any, filter: string, ascending = false) {
 	const sortedElements = JSON.parse(JSON.stringify(elements));
-
 	sortedElements.sort((a: any, b: any) => {
 		const filterA =
 			typeof a[filter][0] === 'string'

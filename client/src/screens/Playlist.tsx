@@ -1,6 +1,16 @@
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
 	sortTracksAscending,
 	sortTracksDescending,
 	formatArtists
@@ -97,6 +107,7 @@ const Playlist: FC = () => {
 				selectedTracks.push(track);
 			}
 		}
+		console.log(`selectedTracks: ${JSON.stringify(selectedTracks)}`);
 	};
 
 	function formatTracks(resTracks: any) {
@@ -191,10 +202,10 @@ const Playlist: FC = () => {
 	// }
 
 	function sortTracks(filter: any) {
-		let sortedTracks: any;
-		if (sortTracksOrder === 0)
-			sortedTracks = sortTracksAscending(tracks, filter);
-		else sortedTracks = sortTracksDescending(tracks, filter);
+		const sortedTracks =
+			sortTracksOrder === 0
+				? sortTracksAscending(tracks, filter)
+				: sortTracksDescending(tracks, filter);
 		setTracks(sortedTracks);
 		setSortTracksOrder((sortTracksOrder + 1) % 2);
 	}
@@ -209,133 +220,84 @@ const Playlist: FC = () => {
 		if (!tracks) return '';
 		let trackComp: any = [];
 		trackComp = tracks.map((track: any) => (
-			<tr key={track.id} style={{ padding: '10px' }}>
-				<td style={{ textAlign: 'center' }}>
-					<input
-						className="inputButton"
+			<TableRow key={track.id} className="px-8">
+				<TableCell className="text-center">
+					<Checkbox
 						id={track.id}
 						name={track.id}
-						type="checkbox"
 						value={track.selected}
-						onChange={() => handleChange(track)}
+						onClick={() => handleChange(track)}
 					/>
-				</td>
-				<td style={{ padding: '5px', minWidth: '30px' }}>
-					{track.name}
-				</td>
-				<td style={{ padding: '5px' }}>
+				</TableCell>
+				<TableCell>{track.name}</TableCell>
+				<TableCell>
 					{track.artists
 						.map((artist: Artist) => artist.name)
 						.join(', ')}
-				</td>
-				<td>{track.tempo}</td>
-				<td>{track.valence}</td>
-				<td>{track.energy}</td>
-				<td>{track.danceability}</td>
-				<td>{track.mode}</td>
-				<td>{track.key}</td>
-				<td style={{ textAlign: 'center' }}>
+				</TableCell>
+				<TableCell>{track.tempo}</TableCell>
+				<TableCell>{track.valence}</TableCell>
+				<TableCell>{track.energy}</TableCell>
+				<TableCell>{track.danceability}</TableCell>
+				<TableCell>{track.mode}</TableCell>
+				<TableCell>{track.key}</TableCell>
+				<TableCell className="text-center">
 					{formatDate(track.dateAdded)}
-				</td>
-			</tr>
+				</TableCell>
+			</TableRow>
 		));
 		return trackComp;
 	}
 
+	function createTableHeader() {
+		const TABLE_HEADER = [
+			{ headerName: 'Select', sortName: null },
+			{ headerName: 'Song Name', sortName: 'name' },
+			{ headerName: 'Artists', sortName: 'artists' },
+			{ headerName: 'Tempo', sortName: 'tempo' },
+			{ headerName: 'Valence', sortName: 'valence' },
+			{ headerName: 'Energy', sortName: 'energy' },
+			{ headerName: 'Danceability', sortName: 'danceability' },
+			{ headerName: 'Mode', sortName: 'mode' },
+			{ headerName: 'Key', sortName: 'key' },
+			{ headerName: 'Date Added', sortName: 'dateAdded' }
+		];
+
+		return (
+			<TableRow>
+				{TABLE_HEADER.map((header) => (
+					<TableHead key={header.sortName} className="text-center">
+						<Button
+							variant="ghost"
+							onClick={() =>
+								header.sortName && sortOrder(header.sortName)
+							}
+						>
+							{header.headerName}
+						</Button>
+					</TableHead>
+				))}
+			</TableRow>
+		);
+	}
+
 	return (
-		<>
-			<div className="text-center text-success">
-				<h2>{playlist ? playlist.name : 'No Playlist'}</h2>
-				<p>Total Tracks: {tracks ? tracks.length : '0'}</p>
+		<div className="flex-col">
+			<div className="text-center space-y-4 mb-4">
+				<h2 className="text-5xl font-black">
+					{playlist ? playlist.name : 'No Playlist'}
+				</h2>
+				<p className="text-2xl">
+					Total Tracks: {tracks ? tracks.length : '0'}
+				</p>
 			</div>
-			<div className="d-flex justify-content-center">
-				<table className="table text-light">
-					<thead className="center tableHeader">
-						<tr>
-							<th
-								className="headerButton"
-								style={{ textDecoration: 'none' }}
-							>
-								Select
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('name')}
-								>
-									Song Name⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('artists')}
-								>
-									Artists⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('tempo')}
-								>
-									Tempo⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('valence')}
-								>
-									Valence⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('energy')}
-								>
-									Energy⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('danceability')}
-								>
-									Dance⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('mode')}
-								>
-									Mode⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('key')}
-								>
-									Key⇵
-								</button>
-							</th>
-							<th>
-								<button
-									className="headerButton"
-									onClick={() => sortOrder('dateAdded')}
-								>
-									Date Added⇵
-								</button>
-							</th>
-						</tr>
-					</thead>
-					<tbody className="">{tracks ? displayTracks() : ''}</tbody>
-				</table>
+			<div>
+				<Table>
+					<TableHeader>{createTableHeader()}</TableHeader>
+					<TableBody>{tracks ? displayTracks() : ''}</TableBody>
+				</Table>
 			</div>
-		</>
+		</div>
 	);
 };
 
