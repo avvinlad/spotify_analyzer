@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import {
 	sortTracksAscending,
 	sortTracksDescending,
@@ -23,6 +24,7 @@ interface PlaylistObj {
 	description: string;
 	uri: string;
 	total: number;
+	image: string;
 }
 
 interface Track {
@@ -49,7 +51,7 @@ const Playlist: FC = () => {
 	const { playlistID } = useParams();
 	const [tracks, setTracks] = useState<Track[]>([]);
 	const [playlist, setPlaylist] = useState<PlaylistObj>();
-	const [sortTracksOrder, setSortTracksOrder] = useState(0);
+	const [sortTracksOrder, setSortTracksOrder] = useState(1);
 	const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
 	const accessToken = sessionStorage.getItem('accessToken');
 
@@ -66,7 +68,13 @@ const Playlist: FC = () => {
 						name: res.data.name,
 						description: res.data.description,
 						uri: res.data.uri,
-						total: res.data.tracks.total
+						total: res.data.tracks.total,
+						image:
+							res.data.images.length > 1
+								? res.data.images[1].url
+								: res.data.images.length > 0
+								? res.data.images[0].url
+								: 'No Image Found'
 					};
 					setPlaylist(playlist);
 				})
@@ -107,7 +115,6 @@ const Playlist: FC = () => {
 				selectedTracks.push(track);
 			}
 		}
-		console.log(`selectedTracks: ${JSON.stringify(selectedTracks)}`);
 	};
 
 	function formatTracks(resTracks: any) {
@@ -235,13 +242,15 @@ const Playlist: FC = () => {
 						.map((artist: Artist) => artist.name)
 						.join(', ')}
 				</TableCell>
-				<TableCell>{track.tempo}</TableCell>
-				<TableCell>{track.valence}</TableCell>
-				<TableCell>{track.energy}</TableCell>
-				<TableCell>{track.danceability}</TableCell>
-				<TableCell>{track.mode}</TableCell>
-				<TableCell>{track.key}</TableCell>
+				<TableCell className="text-center">{track.tempo}</TableCell>
+				<TableCell className="text-center">{track.valence}</TableCell>
+				<TableCell className="text-center">{track.energy}</TableCell>
 				<TableCell className="text-center">
+					{track.danceability}
+				</TableCell>
+				<TableCell className="text-center">{track.mode}</TableCell>
+				<TableCell className="text-center">{track.key}</TableCell>
+				<TableCell className="text-right">
 					{formatDate(track.dateAdded)}
 				</TableCell>
 			</TableRow>
@@ -283,19 +292,43 @@ const Playlist: FC = () => {
 
 	return (
 		<div className="flex-col">
-			<div className="text-center space-y-4 mb-4">
-				<h2 className="text-5xl font-black">
-					{playlist ? playlist.name : 'No Playlist'}
-				</h2>
-				<p className="text-2xl">
-					Total Tracks: {tracks ? tracks.length : '0'}
-				</p>
+			<div className="space-y-4 mb-4">
+				{playlist && (
+					<Card className="mt-4">
+						<CardContent className="p-8 justify-normal items-start">
+							<img
+								className="rounded-xl"
+								key={playlist.id}
+								id={playlist.id}
+								height={150}
+								src={playlist.image}
+								alt={playlist.name}
+							/>
+							<div className="flex-col ml-8 space-y-8 py-4">
+								<CardTitle className="text-4xl">
+									{playlist ? playlist.name : 'No Playlist'}
+								</CardTitle>
+								<p className="text-lg">
+									{tracks ? tracks.length : '0'} songs
+								</p>
+							</div>
+						</CardContent>
+					</Card>
+				)}
+				<h2 className="text-5xl font-black"></h2>
+				<p className="text-2xl"></p>
 			</div>
 			<div>
-				<Table>
-					<TableHeader>{createTableHeader()}</TableHeader>
-					<TableBody>{tracks ? displayTracks() : ''}</TableBody>
-				</Table>
+				<Card className="py-6 px-4">
+					<CardContent>
+						<Table>
+							<TableHeader>{createTableHeader()}</TableHeader>
+							<TableBody>
+								{tracks ? displayTracks() : ''}
+							</TableBody>
+						</Table>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);
