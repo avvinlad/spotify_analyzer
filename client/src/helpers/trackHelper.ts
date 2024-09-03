@@ -107,4 +107,21 @@ function _filterDescending(a: any, b: any) {
 	return 0;
 }
 
-export { sortTracksAscending, sortTracksDescending, formatArtists };
+function formatDuration(ms: number) {
+	const millisecondsInMinute = 60 * 1000;
+	const millisecondsInHour = 60 * millisecondsInMinute;
+
+	const hours = Math.floor(ms / millisecondsInHour);
+	ms %= millisecondsInHour;
+
+	const minutes = Math.floor(ms / millisecondsInMinute);
+
+	return `${hours} hr ${minutes} min`;
+}
+
+export {
+	sortTracksAscending,
+	sortTracksDescending,
+	formatArtists,
+	formatDuration
+};

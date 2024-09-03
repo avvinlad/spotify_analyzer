@@ -14,7 +14,8 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import {
 	sortTracksAscending,
 	sortTracksDescending,
-	formatArtists
+	formatArtists,
+	formatDuration
 } from '../helpers/trackHelper';
 import Axios from 'axios';
 
@@ -25,6 +26,12 @@ interface PlaylistObj {
 	uri: string;
 	total: number;
 	image: string;
+	owner: {
+		name: string;
+		link: string;
+	};
+	public: boolean;
+	duration: number;
 }
 
 interface Track {
@@ -74,11 +81,22 @@ const Playlist: FC = () => {
 								? res.data.images[1].url
 								: res.data.images.length > 0
 								? res.data.images[0].url
-								: 'No Image Found'
+								: 'No Image Found',
+						owner: {
+							name: res.data.owner.display_name,
+							link: res.data.owner.href
+						},
+						public: res.data.public,
+						duration: res.data.tracks.items.reduce(
+							(total: number, curTrack: any) =>
+								total + curTrack.track.duration_ms,
+							0
+						)
 					};
 					setPlaylist(playlist);
 				})
 				.catch(() => {
+					console.log(`Error gathering playlist information.`);
 					window.location.href = '/';
 				});
 		}
@@ -295,7 +313,7 @@ const Playlist: FC = () => {
 			<div className="space-y-4 mb-4">
 				{playlist && (
 					<Card className="mt-4">
-						<CardContent className="p-8 justify-normal items-start">
+						<CardContent className="p-8 justify-start">
 							<img
 								className="rounded-xl"
 								key={playlist.id}
@@ -304,13 +322,32 @@ const Playlist: FC = () => {
 								src={playlist.image}
 								alt={playlist.name}
 							/>
-							<div className="flex-col ml-8 space-y-8 py-4">
-								<CardTitle className="text-4xl">
-									{playlist ? playlist.name : 'No Playlist'}
-								</CardTitle>
-								<p className="text-lg">
-									{tracks ? tracks.length : '0'} songs
-								</p>
+							<div className="flex">
+								<div className="flex-grow ml-8 space-y-8 py-4">
+									<CardTitle className="text-4xl">
+										{playlist
+											? playlist.name
+											: 'No Playlist'}
+									</CardTitle>
+									<p className="text-lg">
+										{tracks ? tracks.length : '0'} songs
+									</p>
+									<p className="text-lg">
+										Playlist by: {playlist.owner.name}
+									</p>
+									<p className="text-lg">
+										Duration:{' '}
+										{formatDuration(playlist.duration)}
+									</p>
+									<p className="text-lg">
+										{playlist.public
+											? '🌐 Public'
+											: '🔒 Private'}
+									</p>
+								</div>
+								<div className="flex-grow space-y-8 py-4 bg-slate-700">
+									how do I make this work
+								</div>
 							</div>
 						</CardContent>
 					</Card>
