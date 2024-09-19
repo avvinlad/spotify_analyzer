@@ -243,6 +243,7 @@ const Playlist: FC = () => {
 	// DISPLAY TRACKS
 	function displayTracks() {
 		if (!tracks) return '';
+
 		let trackComp: any = [];
 		trackComp = tracks.map((track: any) => (
 			<TableRow key={track.id} className="px-8">
@@ -308,22 +309,24 @@ const Playlist: FC = () => {
 		);
 	}
 
-	return (
-		<div className="flex-col">
+	function header() {
+		return (
 			<div className="space-y-4 mb-4">
 				{playlist && (
-					<Card className="mt-4">
-						<CardContent className="p-8 justify-start">
-							<img
-								className="rounded-xl"
-								key={playlist.id}
-								id={playlist.id}
-								height={150}
-								src={playlist.image}
-								alt={playlist.name}
-							/>
-							<div className="flex">
-								<div className="flex-grow ml-8 space-y-8 py-4">
+					<Card className="flex-row mt-4">
+						<CardContent className="p-8">
+							<div>
+								<img
+									className="rounded-xl"
+									key={playlist.id}
+									id={playlist.id}
+									height={150}
+									src={playlist.image}
+									alt={playlist.name}
+								/>
+							</div>
+							<div className="flex-1 text-left">
+								<div className="ml-8 space-y-8 py-4">
 									<CardTitle className="text-4xl">
 										{playlist
 											? playlist.name
@@ -345,9 +348,12 @@ const Playlist: FC = () => {
 											: '🔒 Private'}
 									</p>
 								</div>
-								<div className="flex-grow space-y-8 py-4 bg-slate-700">
-									how do I make this work
-								</div>
+							</div>
+							<div className="flex flex-col space-y-8 items-center justify-center">
+								<Button className="mx-2">
+									Create New Playlist
+								</Button>
+								<Button className="mx-2">Export to CSV</Button>
 							</div>
 						</CardContent>
 					</Card>
@@ -355,6 +361,12 @@ const Playlist: FC = () => {
 				<h2 className="text-5xl font-black"></h2>
 				<p className="text-2xl"></p>
 			</div>
+		);
+	}
+
+	return (
+		<div className="flex-col">
+			{header()}
 			<div>
 				<Card className="py-6 px-4">
 					<CardContent>
