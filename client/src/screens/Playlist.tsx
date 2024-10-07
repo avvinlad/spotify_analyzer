@@ -117,6 +117,13 @@ const Playlist: FC = () => {
 		}
 	});
 
+	function removeDuplicateTracks(tracks: any) {
+		const map = new Map();
+		tracks.forEach((track: any) => map.set(track.id, track));
+
+		setTracks(Array.from(map.values()));
+	}
+
 	const handleChange = (track: Track) => {
 		track.selected = !track.selected;
 		if (!track.selected) {
@@ -150,6 +157,7 @@ const Playlist: FC = () => {
 			mode: 0,
 			key: 0
 		}));
+
 		audioFeatures(shapedTracks);
 	}
 
@@ -211,7 +219,7 @@ const Playlist: FC = () => {
 				}
 			});
 		});
-		setTracks(updatedTracks);
+		removeDuplicateTracks(updatedTracks);
 	}
 
 	// function createPlaylist() {
