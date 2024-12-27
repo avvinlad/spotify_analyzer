@@ -15,49 +15,18 @@ import {
 	sortTracksAscending,
 	sortTracksDescending,
 	formatArtists,
-	formatDuration
+	formatPlaylistDuration,
+	formatMilliseconds
 } from '../helpers/trackHelper';
 import Axios from 'axios';
+import Playlist from '@/interfaces/Playlist';
+import Track from '@/interfaces/Track';
+import Artist from '@/interfaces/Artist';
 
-interface PlaylistObj {
-	id: string;
-	name: string;
-	description: string;
-	uri: string;
-	total: number;
-	image: string;
-	owner: {
-		name: string;
-		link: string;
-	};
-	public: boolean;
-	duration: number;
-}
-
-interface Track {
-	id: string;
-	name: string;
-	artists: object[];
-	dateAdded: string;
-	tempo: number;
-	acoustics: number;
-	valence: number;
-	energy: number;
-	danceability: number;
-	mode: number;
-	key: number;
-	selected: boolean;
-}
-
-interface Artist {
-	id: string;
-	name: string;
-}
-
-const Playlist: FC = () => {
+const PlaylistView: FC = () => {
 	const { playlistID } = useParams();
 	const [tracks, setTracks] = useState<Track[]>([]);
-	const [playlist, setPlaylist] = useState<PlaylistObj>();
+	const [playlist, setPlaylist] = useState<Playlist>();
 	const [sortTracksOrder, setSortTracksOrder] = useState(1);
 	const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -70,7 +39,7 @@ const Playlist: FC = () => {
 				params: { accessToken, playlistID }
 			})
 				.then((res) => {
-					const playlist: PlaylistObj = {
+					const playlist: Playlist = {
 						id: res.data.id,
 						name: res.data.name,
 						description: res.data.description,
@@ -149,90 +118,11 @@ const Playlist: FC = () => {
 			name: track.track.name,
 			artists: formatArtists(track.track.artists),
 			dateAdded: track.added_at,
-			tempo: 0,
-			acoustics: 0,
-			valence: 0,
-			energy: 0,
-			danceability: 0,
-			mode: 0,
-			key: 0
+			duration: formatMilliseconds(track.track.duration_ms)
 		}));
-
-		audioFeatures(shapedTracks);
+		removeDuplicateTracks(shapedTracks);
+		// audioFeatures(shapedTracks);
 	}
-
-	// async processes to retrieve all audio features
-	async function audioFeatures(rawTracks: Track[]) {
-		if (playlist) {
-			const tracks = rawTracks.map((track) => track.id);
-			const offsets = Math.floor(tracks.length / 100) + 1;
-			const promises = [];
-			let curTracks: string = '';
-			for (let chunk = 0; chunk < offsets; chunk++) {
-				curTracks = tracks
-					.slice(chunk * 100, (chunk + 1) * 100)
-					.join(',');
-				promises.push(_getAudioFeatures(curTracks));
-			}
-
-			Promise.all(promises).then((response) => {
-				let audioFeatures: any = [];
-				response.forEach((audioFeature) => {
-					audioFeatures = audioFeatures.concat(audioFeature);
-				});
-				addAudioFeatures(rawTracks, audioFeatures);
-			});
-		}
-	}
-
-	// get request for audio features
-	async function _getAudioFeatures(tracksID: string) {
-		const res = await Axios.get('http://localhost:3001/getTrackFeatures', {
-			params: { accessToken, tracksID }
-		});
-		if (res.status !== 200) {
-			return null;
-		}
-		return res.data;
-	}
-
-	// add audio features to state
-	function addAudioFeatures(shapedTracks: Track[], audioFeatures: any) {
-		const updatedTracks: Track[] = shapedTracks;
-		if (!tracks && !audioFeatures) {
-			return null;
-		}
-		if (updatedTracks.length !== audioFeatures.length) {
-			return null;
-		}
-		updatedTracks.forEach((track) => {
-			audioFeatures.forEach((feature: any) => {
-				if (track.id === feature.id) {
-					track.tempo = feature.tempo;
-					track.acoustics = feature.acoustics;
-					track.energy = feature.energy;
-					track.valence = feature.valence;
-					track.danceability = feature.danceability;
-					track.mode = feature.mode;
-					track.key = feature.key;
-					track.selected = false;
-				}
-			});
-		});
-		removeDuplicateTracks(updatedTracks);
-	}
-
-	// function createPlaylist() {
-	// 	let userID = 'avinladd';
-	// 	let playlistName = 'API Playlist';
-	// 	let playlistDesc = 'This is the API description';
-	// 	Axios.post('http://localhost:3001/createPlaylist', {
-	// 		accessToken,
-	// 		userID,
-	// 		playlistName,
-	// 		playlistDesc,
-	// 	});
-	// }
 
 	function sortTracks(filter: any) {
 		const sortedTracks =
@@ -269,14 +159,7 @@ const Playlist: FC = () => {
 						.map((artist: Artist) => artist.name)
 						.join(', ')}
 				</TableCell>
-				<TableCell className="text-center">{track.tempo}</TableCell>
-				<TableCell className="text-center">{track.valence}</TableCell>
-				<TableCell className="text-center">{track.energy}</TableCell>
-				<TableCell className="text-center">
-					{track.danceability}
-				</TableCell>
-				<TableCell className="text-center">{track.mode}</TableCell>
-				<TableCell className="text-center">{track.key}</TableCell>
+				<TableCell className="text-center">{track.duration}</TableCell>
 				<TableCell className="text-right">
 					{formatDate(track.dateAdded)}
 				</TableCell>
@@ -290,12 +173,7 @@ const Playlist: FC = () => {
 			{ headerName: 'Select', sortName: null },
 			{ headerName: 'Song Name', sortName: 'name' },
 			{ headerName: 'Artists', sortName: 'artists' },
-			{ headerName: 'Tempo', sortName: 'tempo' },
-			{ headerName: 'Valence', sortName: 'valence' },
-			{ headerName: 'Energy', sortName: 'energy' },
-			{ headerName: 'Danceability', sortName: 'danceability' },
-			{ headerName: 'Mode', sortName: 'mode' },
-			{ headerName: 'Key', sortName: 'key' },
+			{ headerName: 'Duration', sortName: 'duration' },
 			{ headerName: 'Date Added', sortName: 'dateAdded' }
 		];
 
@@ -344,11 +222,10 @@ const Playlist: FC = () => {
 										{tracks ? tracks.length : '0'} songs
 									</p>
 									<p className="text-lg">
-										Playlist by: {playlist.owner.name}
-									</p>
-									<p className="text-lg">
 										Duration:{' '}
-										{formatDuration(playlist.duration)}
+										{formatPlaylistDuration(
+											playlist.duration
+										)}
 									</p>
 									<p className="text-lg">
 										{playlist.public
@@ -391,4 +268,4 @@ const Playlist: FC = () => {
 	);
 };
 
-export default Playlist;
+export default PlaylistView;

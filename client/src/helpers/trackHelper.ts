@@ -1,3 +1,16 @@
+function formatMilliseconds(milliseconds: number) {
+	// const hours = Math.floor(milliseconds / 3600000); // 1 hour = 3600000 ms
+	const minutes = Math.floor((milliseconds % 3600000) / 60000); // 1 minute = 60000 ms
+	const seconds = Math.floor((milliseconds % 60000) / 1000); // 1 second = 1000 ms
+
+	// Pad with leading zeros if needed
+	// const formattedHours = hours.toString().padStart(2, '0');
+	const formattedMinutes = minutes.toString();
+	const formattedSeconds = seconds.toString().padStart(2, '0');
+
+	return `${formattedMinutes}:${formattedSeconds}`;
+}
+
 function formatArtists(artists: any) {
 	return artists.map((artist: any): any => ({
 		id: artist.id,
@@ -107,7 +120,7 @@ function _filterDescending(a: any, b: any) {
 	return 0;
 }
 
-function formatDuration(ms: number) {
+function formatPlaylistDuration(ms: number) {
 	const millisecondsInMinute = 60 * 1000;
 	const millisecondsInHour = 60 * millisecondsInMinute;
 
@@ -123,5 +136,6 @@ export {
 	sortTracksAscending,
 	sortTracksDescending,
 	formatArtists,
-	formatDuration
+	formatPlaylistDuration,
+	formatMilliseconds
 };

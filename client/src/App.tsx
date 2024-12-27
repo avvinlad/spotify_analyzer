@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import Login from './Login';
 import Dashboard from './screens/Dashboard';
-import Playlist from './screens/Playlist';
+import Playlist from './screens/PlaylistView';
 import Error from './screens/Error';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 

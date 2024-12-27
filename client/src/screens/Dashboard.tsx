@@ -1,7 +1,7 @@
 import { useEffect, useState, FC } from 'react';
 import useAuth from '../useAuth';
 import Axios from 'axios';
-import Playlist from './Playlist';
+import Playlist from './PlaylistView';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type Code = {
