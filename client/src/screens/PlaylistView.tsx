@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { CSVLink } from 'react-csv';
+import Axios from 'axios';
 import {
 	Table,
 	TableBody,
@@ -18,7 +20,6 @@ import {
 	formatPlaylistDuration,
 	formatMilliseconds
 } from '../helpers/trackHelper';
-import Axios from 'axios';
 import Playlist from '@/interfaces/Playlist';
 import Track from '@/interfaces/Track';
 import Artist from '@/interfaces/Artist';
@@ -32,6 +33,14 @@ const PlaylistView: FC = () => {
 	const accessToken = sessionStorage.getItem('accessToken');
 
 	const sortOrder = (filter: string) => sortTracks(filter);
+
+	const EXPORT_LABELS = [
+		{ label: 'ID', key: 'id' },
+		{ label: 'Name', key: 'name' },
+		{ label: 'Artists', key: 'artists' },
+		{ label: 'Date Added', key: 'dateAdded' },
+		{ label: 'Song Duration', key: 'duration' }
+	];
 
 	useEffect(() => {
 		if (accessToken && playlistID) {
@@ -106,7 +115,7 @@ const PlaylistView: FC = () => {
 				(curTrack) => curTrack.id === track.id
 			);
 			if (found === -1) {
-				selectedTracks.push(track);
+				setSelectedTracks((tracks: Track[]) => [...tracks, track]);
 			}
 		}
 	};
@@ -170,7 +179,13 @@ const PlaylistView: FC = () => {
 
 	function createTableHeader() {
 		const TABLE_HEADER = [
-			{ headerName: 'Select', sortName: null },
+			{
+				headerName:
+					selectedTracks.length > 0
+						? `Selected: ${selectedTracks.length}`
+						: 'Select',
+				sortName: null
+			},
 			{ headerName: 'Song Name', sortName: 'name' },
 			{ headerName: 'Artists', sortName: 'artists' },
 			{ headerName: 'Duration', sortName: 'duration' },
@@ -238,7 +253,27 @@ const PlaylistView: FC = () => {
 								<Button className="mx-2">
 									Create New Playlist
 								</Button>
-								<Button className="mx-2">Export to CSV</Button>
+								<Button className="mx-2">
+									<CSVLink
+										headers={EXPORT_LABELS}
+										data={tracks.map((track: any) => ({
+											...track,
+											artists: track.artists
+												.map(
+													(artist: Artist) =>
+														artist.name
+												)
+												.join(', ')
+										}))}
+										target="_blank"
+										filename={`${playlist.name}.csv`}
+									>
+										Export to CSV
+									</CSVLink>
+								</Button>
+								<Button className="mx-2">
+									Remove From Playlist
+								</Button>
 							</div>
 						</CardContent>
 					</Card>
