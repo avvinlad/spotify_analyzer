@@ -10,7 +10,7 @@ const code: string =
 
 const App: FC = () => {
 	return (
-		<div className="flex container justify-center mx-auto w-2/3">
+		<div className="flex container justify-center mx-auto">
 			<BrowserRouter>
 				<Routes>
 					<Route

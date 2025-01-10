@@ -13,24 +13,39 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { formatTracks, formatDate } from '../helpers/trackHelper';
+import { formatPlaylistDuration } from '../helpers/playlistHelper';
 import {
 	sortTracksAscending,
-	sortTracksDescending,
-	formatArtists,
-	formatPlaylistDuration,
-	formatMilliseconds
-} from '../helpers/trackHelper';
+	sortTracksDescending
+} from '../helpers/sortTracksHelper';
 import Playlist from '@/interfaces/Playlist';
 import Track from '@/interfaces/Track';
 import Artist from '@/interfaces/Artist';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const PlaylistView: FC = () => {
 	const { playlistID } = useParams();
 	const [tracks, setTracks] = useState<Track[]>([]);
 	const [playlist, setPlaylist] = useState<Playlist>();
 	const [sortTracksOrder, setSortTracksOrder] = useState(1);
+	const [enableCreatePlaylistModal, setEnableCreatePlaylistModal] =
+		useState(false);
+	const [enableRemoveFromPlaylistModal, setEnableRemoveFromPlaylistModal] =
+		useState(false);
 	const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
 	const accessToken = sessionStorage.getItem('accessToken');
+
+	const { toast } = useToast();
 
 	const sortOrder = (filter: string) => sortTracks(filter);
 
@@ -87,7 +102,7 @@ const PlaylistView: FC = () => {
 				params: { accessToken, playlistID, totalTracks }
 			})
 				.then((res) => {
-					formatTracks(res.data);
+					setTracks(formatTracks(res.data));
 				})
 				.catch(() => {
 					window.location.href = '/';
@@ -95,11 +110,13 @@ const PlaylistView: FC = () => {
 		}
 	});
 
-	function removeDuplicateTracks(tracks: any) {
-		const map = new Map();
-		tracks.forEach((track: any) => map.set(track.id, track));
-
-		setTracks(Array.from(map.values()));
+	function sortTracks(filter: any) {
+		const sortedTracks =
+			sortTracksOrder === 0
+				? sortTracksAscending(tracks, filter)
+				: sortTracksDescending(tracks, filter);
+		setTracks(sortedTracks);
+		setSortTracksOrder((sortTracksOrder + 1) % 2);
 	}
 
 	const handleChange = (track: Track) => {
@@ -120,31 +137,22 @@ const PlaylistView: FC = () => {
 		}
 	};
 
-	function formatTracks(resTracks: any) {
-		let shapedTracks: Track[] = [];
-		shapedTracks = resTracks.map((track: any) => ({
-			id: track.track.id,
-			name: track.track.name,
-			artists: formatArtists(track.track.artists),
-			dateAdded: track.added_at,
-			duration: formatMilliseconds(track.track.duration_ms)
-		}));
-		removeDuplicateTracks(shapedTracks);
-		// audioFeatures(shapedTracks);
+	function handleCreatePlaylist() {
+		if (selectedTracks.length === 0)
+			return toast({
+				description: 'Please Select Songs to Create a Playlist.'
+			});
+
+		return setEnableCreatePlaylistModal(true);
 	}
 
-	function sortTracks(filter: any) {
-		const sortedTracks =
-			sortTracksOrder === 0
-				? sortTracksAscending(tracks, filter)
-				: sortTracksDescending(tracks, filter);
-		setTracks(sortedTracks);
-		setSortTracksOrder((sortTracksOrder + 1) % 2);
-	}
+	function handleRemoveTracks() {
+		if (selectedTracks.length === 0)
+			return toast({
+				description: 'Please Select Songs to Delete.'
+			});
 
-	function formatDate(date: string) {
-		const datetime: Date = new Date(date);
-		return datetime.toLocaleDateString();
+		return setEnableRemoveFromPlaylistModal(true);
 	}
 
 	// DISPLAY TRACKS
@@ -175,6 +183,86 @@ const PlaylistView: FC = () => {
 			</TableRow>
 		));
 		return trackComp;
+	}
+
+	function displayCreatePlaylistModal() {
+		return (
+			<Dialog
+				open={enableCreatePlaylistModal}
+				onOpenChange={handleCreatePlaylist}
+			>
+				<DialogTrigger asChild>
+					<Button>Create New Playlist</Button>
+				</DialogTrigger>
+				<DialogContent removeCloseButton>
+					<DialogHeader>
+						<DialogTitle>Create New Playlist</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to add the following{' '}
+							{selectedTracks.length} song(s) to a new playlist?
+						</DialogDescription>
+					</DialogHeader>
+					<div>
+						<div>
+							{selectedTracks.map((track: Track) => (
+								<p key={track.id}>{track.name}</p>
+							))}
+						</div>
+					</div>
+					<DialogFooter>
+						<Button
+							onClick={() => setEnableCreatePlaylistModal(false)}
+						>
+							No
+						</Button>
+						<Button type="submit" className="bg-green-600">
+							Create New Playlist
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		);
+	}
+
+	function displayRemoveFromPlaylist() {
+		return (
+			<Dialog
+				open={enableRemoveFromPlaylistModal}
+				onOpenChange={handleRemoveTracks}
+			>
+				<DialogTrigger asChild>
+					<Button>Remove From Playlist</Button>
+				</DialogTrigger>
+				<DialogContent removeCloseButton>
+					<DialogHeader>
+						<DialogTitle>Remove From Playlist</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to delete the following{' '}
+							{selectedTracks.length} song(s)?
+						</DialogDescription>
+					</DialogHeader>
+					<div>
+						<div>
+							{selectedTracks.map((track: Track) => (
+								<p key={track.id}>{track.name}</p>
+							))}
+						</div>
+					</div>
+					<DialogFooter>
+						<Button
+							onClick={() =>
+								setEnableRemoveFromPlaylistModal(false)
+							}
+						>
+							No
+						</Button>
+						<Button type="submit" variant="destructive">
+							Remove Songs
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		);
 	}
 
 	function createTableHeader() {
@@ -250,9 +338,7 @@ const PlaylistView: FC = () => {
 								</div>
 							</div>
 							<div className="flex flex-col space-y-8 items-center justify-center">
-								<Button className="mx-2">
-									Create New Playlist
-								</Button>
+								{displayCreatePlaylistModal()}
 								<Button className="mx-2">
 									<CSVLink
 										headers={EXPORT_LABELS}
@@ -271,9 +357,13 @@ const PlaylistView: FC = () => {
 										Export to CSV
 									</CSVLink>
 								</Button>
-								<Button className="mx-2">
+								{displayRemoveFromPlaylist()}
+								{/* <Button
+									className="mx-2"
+									onClick={() => handleDeleteTracks()}
+								>
 									Remove From Playlist
-								</Button>
+								</Button> */}
 							</div>
 						</CardContent>
 					</Card>
