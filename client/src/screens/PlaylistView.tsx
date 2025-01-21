@@ -176,6 +176,9 @@ const PlaylistView: FC = () => {
 						.map((artist: Artist) => artist.name)
 						.join(', ')}
 				</TableCell>
+				<TableCell className="text-center">
+					{track.popularity}
+				</TableCell>
 				<TableCell className="text-center">{track.duration}</TableCell>
 				<TableCell className="text-right">
 					{formatDate(track.dateAdded)}
@@ -276,6 +279,7 @@ const PlaylistView: FC = () => {
 			},
 			{ headerName: 'Song Name', sortName: 'name' },
 			{ headerName: 'Artists', sortName: 'artists' },
+			{ headerName: 'Popularity (0-100)', sortName: 'popularity' },
 			{ headerName: 'Duration', sortName: 'duration' },
 			{ headerName: 'Date Added', sortName: 'dateAdded' }
 		];

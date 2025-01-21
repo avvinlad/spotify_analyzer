@@ -6,6 +6,7 @@ function formatTracks(resTracks: any) {
 		id: track.track.id,
 		name: track.track.name,
 		artists: _formatArtists(track.track.artists),
+		popularity: track.track.popularity,
 		dateAdded: track.added_at,
 		duration: _formatMilliseconds(track.track.duration_ms)
 	}));
