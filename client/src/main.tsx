@@ -6,7 +6,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<div className="dark bg-neutral-800 text-zinc-100">
+		<div className="dark bg-neutral-900 text-neutral-50">
 			<App />
 			<Toaster />
 		</div>

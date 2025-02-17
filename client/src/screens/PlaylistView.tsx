@@ -32,6 +32,7 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const PlaylistView: FC = () => {
 	const { playlistID } = useParams();
@@ -205,13 +206,7 @@ const PlaylistView: FC = () => {
 							{selectedTracks.length} song(s) to a new playlist?
 						</DialogDescription>
 					</DialogHeader>
-					<div>
-						<div>
-							{selectedTracks.map((track: Track) => (
-								<p key={track.id}>{track.name}</p>
-							))}
-						</div>
-					</div>
+					{displaySelectedSongsList()}
 					<DialogFooter>
 						<Button
 							onClick={() => setEnableCreatePlaylistModal(false)}
@@ -244,13 +239,7 @@ const PlaylistView: FC = () => {
 							{selectedTracks.length} song(s)?
 						</DialogDescription>
 					</DialogHeader>
-					<div>
-						<div>
-							{selectedTracks.map((track: Track) => (
-								<p key={track.id}>{track.name}</p>
-							))}
-						</div>
-					</div>
+					{displaySelectedSongsList()}
 					<DialogFooter>
 						<Button
 							onClick={() =>
@@ -265,6 +254,25 @@ const PlaylistView: FC = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+		);
+	}
+
+	function displaySelectedSongsList() {
+		return (
+			<div className="overflow-y-hidden">
+				<div className="border-4 border-gray-600 border-opacity-10 rounded-lg overflow-y-scroll no-scrollbar p-2 max-h-[30vh]">
+					{selectedTracks.map((track: Track) => {
+						return (
+							<div>
+								<p key={track.id} className="p-1 mx-1">
+									{track.name}
+								</p>
+								<Separator className="justify-self-center h-[2px] w-[95%]" />
+							</div>
+						);
+					})}
+				</div>
+			</div>
 		);
 	}
 
@@ -362,12 +370,6 @@ const PlaylistView: FC = () => {
 									</CSVLink>
 								</Button>
 								{displayRemoveFromPlaylist()}
-								{/* <Button
-									className="mx-2"
-									onClick={() => handleDeleteTracks()}
-								>
-									Remove From Playlist
-								</Button> */}
 							</div>
 						</CardContent>
 					</Card>
